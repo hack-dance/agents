@@ -1,0 +1,9 @@
+node_modules/
+public/
+
+.next/
+.turbo/
+.husky/
+.vscode/
+dist/
+.vercel/

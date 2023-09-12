@@ -1,0 +1,33 @@
+{
+  "extends": "./packages/tsconfig/base.json",
+  "compilerOptions": {
+    "incremental": false,
+    "plugins": [],
+    "baseUrl": ".",
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "ES2015",
+      "DOM",
+      "es6",
+      "dom.iterable"
+    ],
+    "module": "ESNext",
+    "target": "es6"
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "apps/**/src/**/*.ts",
+    "packages/**/src/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ]
+}
