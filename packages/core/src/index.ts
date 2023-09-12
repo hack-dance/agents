@@ -1,11 +1,10 @@
-export * from "./streams/oai"
+export * from "./utils/oai-stream"
 
-export * from "./agents/index"
+export * from "./ai/agents/index"
 
-export * from "./oai-fns/index"
-export * from "./oai-fns/fetch"
-export * from "./oai-fns/google-search"
-export * from "./oai-fns/schema"
+export * from "./ai/fns/index"
+export * from "./ai/fns/fetch"
+export * from "./ai/fns/schema"
 
 export * from "./utils/async-queue"
 export * from "./utils/log-generator"

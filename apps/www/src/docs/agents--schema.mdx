@@ -1,0 +1,80 @@
+
+# Schema Agent
+Schema agents extend OpenAi functions by providing a small abstraction that allows you to write
+a schema for the data that you want to receive from the AI using Zod. Optionally, you can also
+provide a description for each field in the schema.
+
+We also provide a <Link href="/docs/hooks/use-json-stream">hook</Link> for consuming json from these schema agents, that uses the schema to provide partial json streaming so you can start using the data as soon as the first chunk comes through.
+
+
+**Agent Definition**
+<span>
+  `@/ai/agents/joke-agent.ts`
+</span>
+
+```ts
+import { createSchemaAgent } from "@/ai/agents"
+import OpenAI from "openai"
+
+import z from "zod"
+
+export const jokeAgentSchema = z.object({
+  content: z.string({
+    description: "Your opinion on the joke."
+  }),
+  jokeScore: z.number({
+    description: "A score between 0 and 100 on how funny the joke was."
+  })
+})
+
+const primaryIdentity = `
+  You are a joke critic AI, tasked with listening to jokes from users and giving them your opinion on how funny they are
+  as well as a score from 0 - 100
+`
+
+export const jokeAgent = createSchemaAgent({
+  config: {
+    model: "gpt-4",
+    max_tokens: 500,
+    temperature: 0.8
+  },
+  identityMessages: [
+    {
+      role: "system",
+      content: primaryIdentity
+    }
+  ],
+  schema: scoreAgentSchema
+})
+
+```
+
+
+**Streaming**
+<span>
+  `@/app/api/chat/route.ts`
+</span>
+
+```ts
+import { exampleAgent } from "@/ai/agents/example-agent"
+
+export const runtime = "edge"
+
+export async function POST(request: Request): Promise<Response> {
+  try {
+    const { prompt } = await request.json()
+
+    const stream = await exampleAgent.completionStream({
+      prompt
+    })
+
+    return new Response(stream)
+  } catch (error) {
+    console.error(error)
+    return new Response("could not send message")
+  }
+}
+```
+
+
+

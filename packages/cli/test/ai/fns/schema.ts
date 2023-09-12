@@ -1,5 +1,6 @@
-import { createFunctionDefinition } from "@/oai-fns"
 import { ZodArray, ZodBoolean, ZodNumber, ZodObject, ZodString, z } from "zod"
+
+import { createFunctionDefinition } from "@/ai/fns"
 
 type AnyZodType = z.ZodTypeAny
 type PropertyType = "string" | "boolean" | "number" | "object" | "array"

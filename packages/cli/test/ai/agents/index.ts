@@ -2,9 +2,9 @@ import OpenAI from "openai"
 import { Stream } from "openai/streaming"
 import { ZodObject } from "zod"
 
+import { createSchemaFunction } from "@/ai/fns/schema"
 import { OAIResponseParser } from "@/utils/oai"
-import { OaiStream } from "@/streams/oai"
-import { createSchemaFunction } from "@/oai-fns/schema"
+import { OaiStream } from "@/utils/oai-stream"
 
 /**
  * Omit the messages property from the CreateChatCompletionRequest.
@@ -119,19 +119,19 @@ export const createSchemaAgent = ({
   identityMessages,
   schema
 }: CreateSchemaAgentProps): SchemaAgentInstance => {
-  const [_, fnSchema] = createSchemaFunction({ schema })
+  const { definition } = createSchemaFunction({ schema })
   const functionConfig = {
     function_call: {
-      name: fnSchema.name
+      name: definition.name
     },
     functions: [
       {
-        name: fnSchema.name,
-        description: fnSchema.description,
+        name: definition.name,
+        description: definition.description,
         parameters: {
           type: "object",
-          properties: fnSchema.parameters,
-          required: fnSchema.required
+          properties: definition.parameters,
+          required: definition.required
         }
       }
     ]

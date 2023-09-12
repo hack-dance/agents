@@ -17,7 +17,10 @@ export type FunctionDefinitionParams<P extends z.ZodType<unknown>, R extends z.Z
   required?: string[]
 }
 
-export type FunctionDefinitionInterface = [(params: unknown) => Promise<unknown>, FunctionPayload]
+export type FunctionDefinitionInterface = {
+  run: (params: unknown) => Promise<unknown>
+  definition: FunctionPayload
+}
 
 /**
  * `createFunctionDefinition` is a function that creates a function definition. It creates a runner function
@@ -25,7 +28,7 @@ export type FunctionDefinitionInterface = [(params: unknown) => Promise<unknown>
  * It also creates a payload that describes the function.
  *
  * @param {FunctionDefinitionParams} params - The parameters for the function definition.
- * @returns {FunctionDefinitionInterface} - The function definition which is a tuple of the runner function and the function payload.
+ * @returns {FunctionDefinitionInterface} - The function definition runner function and the function payload.
  *
  * @example
  *
@@ -63,15 +66,15 @@ function createFunctionDefinition<P extends z.ZodType<unknown>, R extends z.ZodT
     }
   }
 
-  const functionDefinition: FunctionDefinitionInterface = [
+  const functionDefinition: FunctionDefinitionInterface = {
     run,
-    {
+    definition: {
       name: name,
       description: description,
       parameters: jsonSchema ?? zodToJsonSchema(paramsSchema),
       required
     }
-  ]
+  }
 
   return functionDefinition
 }

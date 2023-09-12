@@ -1,5 +1,4 @@
 import { createSchemaAgent } from "@hack-dance/agents-core"
-import OpenAI from "openai"
 import { omit } from "ramda"
 import z from "zod"
 
@@ -51,7 +50,7 @@ export const delegateAgent = createSchemaAgent({
   },
   identityMessages: [
     {
-      role: OpenAI.Chat.CreateChatCompletionRequestMessage,
+      role: "system",
       content: primaryIdentity
     }
   ],

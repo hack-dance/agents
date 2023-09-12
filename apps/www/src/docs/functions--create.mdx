@@ -1,0 +1,96 @@
+
+# Function Definition
+The function creator is a light-weight utility that allows you to create consistent function definitions for your
+agents. It takes a zod schema and an execute function, and returns a definition that you can pass to open ai directly
+or through the agent creator.
+
+**Definition**
+<span>
+  `@/ai/fns/greetFn.ts`
+</span>
+
+```ts
+  const paramsSchema = z.object({
+    name: z.string(),
+    age: z.number()
+  });
+
+  const execute = async (params) => {
+    console.log(`Hello, ${params.name}. You are ${params.age} years old.`)
+  };
+
+  export const greetFn = createFunctionDefinition({
+    paramsSchema,
+    name: 'greet',
+    description: 'Greets a person.',
+    execute
+  });
+```
+
+**Usage**
+<span>
+  `@/ai/agents/greetAgent.ts`
+</span>
+
+```ts
+import { createChatAgent } from "@/agents"
+import { greetFn } from "@/ai/fns/greetFn"
+
+const primaryIdentity = `
+  You are a user info extractor agent, you will ask the user for their name and age.
+`
+
+export const greeterFns = [greetFn]
+
+export const codingAssistantAgent = createChatAgent({
+  config: {
+    model: "gpt-4",
+    max_tokens: 500,
+    temperature: 0.2,
+    functions: greeterFns.map((fn) => fn.definition)
+  },
+  identityMessages: [
+    {
+      role: "system",
+      content: primaryIdentity
+    }
+  ]
+})
+```
+
+<span>
+  `@/app/api/greet/route.ts`
+</span>
+
+```ts
+import { createChatAgent } from "@/agents"
+import { greetFn } from "@/ai/fns/greetFn"
+import { exampleAgent, greeterFns } from "@/ai/agents/example-agent"
+
+export const runtime = "edge"
+
+export async function POST(request: Request): Promise<Response> {
+  const [greetFnExecute] = greetFn
+
+  try {
+    const { prompt } = await request.json()
+
+    const response = await exampleAgent.completion({
+      prompt
+    })
+
+    executeFunctionFromResponse(
+      response,
+      greeterFns
+    )
+
+
+    return new Response({ ok: true }, { status: 200 })
+
+  } catch (error) {
+    console.error(error)
+    return new Response("could not send message")
+  }
+}
+```
+

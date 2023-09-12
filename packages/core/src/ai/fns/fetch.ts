@@ -1,5 +1,6 @@
-import { FunctionDefinitionInterface, createFunctionDefinition } from "@/oai-fns"
 import { z } from "zod"
+
+import { FunctionDefinitionInterface, createFunctionDefinition } from "@/ai/fns"
 
 type RequestOptions = {
   url?: string

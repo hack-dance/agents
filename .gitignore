@@ -79,9 +79,3 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-
-# functions
-
-function-source.zip
-functions/**/index.js
-functions/**/index.cjs

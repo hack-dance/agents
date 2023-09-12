@@ -37,37 +37,24 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "flex-col items-stretch h-screen w-screen"
             )}
           >
-            <header className="w-full p-4 border-b-2 border-accent flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <h1 className="font-blunt text-sm flex items-center gap-2">
-                  <span className="text-3xl leading-none tracking-tight">×</span>Hack-dance/Agents
+            <header className="w-full p-4 border-b-[1px] border-accent flex justify-between items-center">
+              <div className="flex items-center gap-6">
+                <h1 className="font-blunt text-sm ">
+                  <Link href="/" className="flex items-center gap-2">
+                    <span className="text-3xl leading-none tracking-tight">×</span>Hack-dance/Agents
+                  </Link>
                 </h1>
 
                 <nav className="space-x-4">
-                  <Link
-                    className="font-mono leading-loose text-muted-foreground hover:text-foreground"
-                    href="/getting-started"
-                  >
-                    Documentation
-                  </Link>
-                  <Link
-                    className="font-mono leading-loose text-muted-foreground hover:text-foreground"
-                    href="/getting-started"
-                  >
-                    Utilities
-                  </Link>
-                  <Link
-                    className="font-mono leading-loose text-muted-foreground hover:text-foreground"
-                    href="/getting-started"
-                  >
-                    Hooks
-                  </Link>
-                  <Link
-                    className="font-mono leading-loose text-muted-foreground hover:text-foreground"
-                    href="/getting-started"
-                  >
-                    Examples
-                  </Link>
+                  {siteConfig.mainNav.map(({ label, url }) => (
+                    <Link
+                      className="text-sm leading-loose text-muted-foreground hover:text-foreground"
+                      href={url}
+                      key={label}
+                    >
+                      {label}
+                    </Link>
+                  ))}
                 </nav>
               </div>
 

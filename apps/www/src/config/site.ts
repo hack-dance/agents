@@ -1,17 +1,27 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "boilerplate",
+  name: "hack-dance/agents",
+  url: "https://agents.hack.dance",
   description: "",
   og: {
-    title: "boilerplate",
+    title: "Hack Dance Agents",
     description: ""
   },
-  mainNav: [],
   links: {
     twitter: {
       url: "https://twitter.com/dimitrikennedy",
       text: "@dimitrikennedy"
     }
-  }
+  },
+  mainNav: [
+    {
+      label: "Documentation",
+      url: "/docs/getting-started"
+    },
+    {
+      label: "Examples",
+      url: "/examples"
+    }
+  ]
 }
