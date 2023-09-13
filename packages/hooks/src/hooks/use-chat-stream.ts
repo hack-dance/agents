@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import OpenAI from "openai"
 
+export type Messages = OpenAI.Chat.ChatCompletionMessageParam[]
+
 export type OnEndArgs = {
-  createdAt: number
+  createdAt: string
   content?: string
+  messagePair?: Messages
+  messages?: Messages
 }
 
 export interface StartStreamArgs {
@@ -20,8 +24,6 @@ export interface StopStream {
   (): void
 }
 
-export type Messages = OpenAI.Chat.ChatCompletionMessageParam[]
-
 export interface UseChatStreamPayload {
   loading: boolean
   startStream: StartStream
@@ -35,39 +37,24 @@ export interface UseChatStreamProps {
   onReceive?: (value: string) => void
   onEnd?: (args: OnEndArgs) => void
   startingMessages?: Messages
+  ctx?: object
 }
 
 /**
- * `useChatStream` is a custom React hook that enables real-time chat functionalities.
- * It manages a chat stream, including starting a chat stream, stopping it, and handling
- * incoming chat messages. It also provides a loading state indicator.
+ * @param {UseChatStreamProps} props
  *
- * @param {UseChatStreamProps} props - The props for the hook include optional callback
- * functions that will be invoked at different stages of the chat stream lifecycle,
- * and a list of starting messages.
+ * @returns {UseChatStreamPayload}
  *
- * @returns {UseChatStreamPayload} - An object that includes the loading state, start and
- * stop stream functions, current messages, and a function to set messages.
- *
- * @example
- * ```
- * const {
- *   loading,
- *   startStream,
- *   stopStream,
- *   messages,
- *   setMessages
- * } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: ... });
- * ```
  */
-export function useChatStream({
+export function useChat({
   onBeforeStart,
   onReceive,
   onEnd,
-  startingMessages = []
+  startingMessages = [],
+  ctx = {}
 }: UseChatStreamProps): UseChatStreamPayload {
+  const [manualRenders, setManualRenders] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [_currentStream, setCurrentStream] = useState("")
 
   const abortControllerRef = useRef<AbortController | null>(null)
   const messagesRef = useRef<Messages>(startingMessages)
@@ -76,15 +63,23 @@ export function useChatStream({
     messagesRef.current = messages
   }, [])
 
-  const startStream = async ({ url, prompt, ctx = {} }) => {
+  const manualSetMessages = useCallback(
+    (messages: Messages) => {
+      messagesRef.current = messages
+
+      setManualRenders(manualRenders + 1)
+    },
+    [manualRenders]
+  )
+
+  const startStream = async ({ url, prompt, ctx: completionCtx = {} }) => {
     try {
-      const newMessages = [
-        ...messagesRef?.current,
-        {
-          content: prompt,
-          role: "user"
-        }
-      ] as Messages
+      const userMessage = {
+        content: prompt,
+        role: "user"
+      }
+
+      const newMessages = [...messagesRef?.current, userMessage] as Messages
 
       const abortController = new AbortController()
       abortControllerRef.current = abortController
@@ -98,8 +93,10 @@ export function useChatStream({
         signal: abortController.signal,
         body: JSON.stringify({
           prompt,
-          messages: messagesRef?.current,
-          ctx
+          ctx: {
+            ...ctx,
+            ...completionCtx
+          }
         })
       })
 
@@ -118,17 +115,27 @@ export function useChatStream({
 
       let result = ""
       const decoder = new TextDecoder()
-      const createdAt = new Date().valueOf()
+      const createdAt = new Date().toISOString()
 
       while (!done) {
         const { value, done: doneReading } = await reader.read()
         done = doneReading
+
         if (done) {
           onEnd &&
             onEnd({
               createdAt,
-              content: result
+              content: result,
+              messages: messagesRef.current,
+              messagePair: [
+                userMessage,
+                {
+                  role: "assistant",
+                  content: result
+                }
+              ] as Messages
             })
+
           setLoading(false)
           break
         }
@@ -138,15 +145,26 @@ export function useChatStream({
 
         onReceive && onReceive(chunkValue)
         setMessages([...newMessages, { role: "assistant", content: result }])
-        setCurrentStream(result)
 
-        done &&
+        if (done) {
           onEnd &&
-          onEnd({
-            createdAt,
-            content: result
-          })
-        done && setLoading(false)
+            onEnd({
+              createdAt,
+              content: result,
+              messages: messagesRef.current,
+              messagePair: [
+                userMessage,
+                {
+                  role: "assistant",
+                  content: result
+                }
+              ] as Messages
+            })
+
+          setLoading(false)
+
+          break
+        }
 
         if (abortControllerRef.current === null) {
           reader.cancel()
@@ -187,6 +205,6 @@ export function useChatStream({
     startStream,
     stopStream,
     messages: messagesRef.current,
-    setMessages
+    setMessages: manualSetMessages
   }
 }
