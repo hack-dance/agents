@@ -46,7 +46,7 @@ export interface UseChatStreamProps {
  * @returns {UseChatStreamPayload}
  *
  */
-export function useChat({
+export function useChatStream({
   onBeforeStart,
   onReceive,
   onEnd,
