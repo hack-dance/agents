@@ -6,6 +6,16 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
+    "hack-dance-agents#build": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "@hack-dance/agents-hooks#build": {
+      "dependsOn": [
+        "@hack-dance/agent-hooks#build"
+      ]
+    },
     "lint": {},
     "dev": {
       "cache": false,

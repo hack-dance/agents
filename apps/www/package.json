@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hack-dance/agents-core": "*",
+    "@hack-dance/agents-core": "workspace:*",
     "@hack-dance/agents-hooks": "*",
     "@hookform/resolvers": "^3.1.1",
     "@radix-ui/react-accordion": "^1.1.2",
