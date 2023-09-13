@@ -39,6 +39,7 @@
     "zod-to-json-schema": "^3.21.3"
   },
   "devDependencies": {
-    "tsup": "^6.4.0"
+    "tsup": "^6.4.0",
+    "tsconfig": "*"
   }
 }
