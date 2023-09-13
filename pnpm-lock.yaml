@@ -253,8 +253,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(tailwindcss@3.3.2)
       tsconfig:
-        specifier: '*'
-        version: 7.0.0
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       tsx:
         specifier: ^3.12.7
         version: 3.12.7
@@ -321,8 +321,8 @@ importers:
         specifier: ^4.6.0
         version: 4.6.0(encoding@0.1.13)
       tsconfig:
-        specifier: '*'
-        version: 7.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       tsup:
         specifier: ^6.4.0
         version: 6.7.0(postcss@8.4.25)(typescript@5.2.2)
@@ -379,8 +379,8 @@ importers:
         specifier: ^4.6.0
         version: 4.6.0(encoding@0.1.13)
       tsconfig:
-        specifier: '*'
-        version: 7.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       tsup:
         specifier: ^6.4.0
         version: 6.7.0(postcss@8.4.25)(typescript@5.2.2)

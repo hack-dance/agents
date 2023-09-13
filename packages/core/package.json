@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "openai": "^4.6.0",
-    "tsconfig": "*",
+    "tsconfig": "workspace:*",
     "tsup": "^6.4.0",
     "zod": "^3.21.4"
   },

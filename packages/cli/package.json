@@ -2,6 +2,7 @@
   "name": "@hackdance/agents-cli",
   "version": "0.0.1",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://dimitrikennedy.com)",
+  "homepage": "https://agents.hack.dance",
   "repository": {
     "directory": "packages/cli",
     "type": "git",

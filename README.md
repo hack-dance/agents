@@ -2,6 +2,7 @@
 > Copy, Paste, AI: A modular toolkit for building more then just chat bots.
 
 [docs](https://agents.hack.dance)
+[cli on npm](https://www.npmjs.com/package/@hackdance/agents-cli)
 
 :information_source: **FYI**: These docs are a work in progress. For now, all code is in TypeScript and examples assume Next.js 13+. Feel free to reach out on Twitter or create an issue on GitHub if something is unclear or broken. More examples and framework integrations are coming soon. Thanks for your patience!
 
