@@ -2,18 +2,13 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
-    "www#build": {
-      "dependsOn": ["@hack-dance/agents-hooks#build"],
+    "build": {
+      "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "hack-dance-agents#build": {
-      "dependsOn": [
-        "^build"
-      ]
     },
     "@hack-dance/agents-hooks#build": {
       "dependsOn": [
-        "@hack-dance/agents-core#build"
+        "^@hack-dance/agents-core#build"
       ]
     },
     "lint": {},
