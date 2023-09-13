@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 import { docs } from "@/config/docs"
 
@@ -19,10 +20,19 @@ export default async function Page({ params: { slug } }) {
     return notFound()
   }
 
-  const Content = dynamic(() => import(`@/docs/${doc.id}.mdx`), {})
+  const Content = dynamic(() => import(`@/docs/${doc.id}.mdx`), {
+    loading: () => (
+      <div className="mt-[200px] h-full w-full flex justify-center items-center mt-8">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading...
+        </div>
+      </div>
+    )
+  })
 
   return (
-    <div className="p-4">
+    <div className="p-4 min-h-full">
       <header className="border-b-[1px] border-b-accent pb-4 mb-8">
         <span className="text-sm text-muted-foreground">
           <Link href="/docs/getting-started">Documentation</Link>
@@ -45,7 +55,8 @@ export default async function Page({ params: { slug } }) {
         <span className="text-sm text-muted-foreground">{` / `}</span>
         <span className="text-sm font-semibold">{doc.title}</span>
       </header>
-      <div className="px-2">
+
+      <div className="px-2 min-h-full">
         <Content />
       </div>
     </div>

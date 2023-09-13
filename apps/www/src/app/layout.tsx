@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <Providers>
           <div className={cn("flex-col h-screen w-screen overflow-hidden relative")}>
-            <header className="absolute top-0 z-10 w-full p-4 border-b-[1px] border-accent h-[64px] backdrop-blur-md bg-background bg-opacity-90">
+            <header className="absolute top-0 z-10 w-full p-4 border-b-[1px] border-accent h-[64px] backdrop-blur-md bg-background/90 dark:bg-background/50">
               <div className="lg:container flex justify-between items-center">
                 <div className="flex items-center lg:gap-6 gap-2">
                   <div className="block lg:hidden">
