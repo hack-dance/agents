@@ -6,12 +6,18 @@ on:
       - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+permissions: {} #reset
 env:
   CI: true
   PNPM_CACHE_FOLDER: .pnpm-store
 
 jobs:
   release:
+    if: github.repository == 'hack-dance/agents'
+    permissions:
+      contents: write
+      pull-requests: write
+
     name: Changeset Release
     runs-on: ubuntu-latest
     env:
