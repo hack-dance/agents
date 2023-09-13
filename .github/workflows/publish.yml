@@ -44,6 +44,14 @@ jobs:
       - name: Copy files to cli
         run: bun prepare-build
 
+      - name: Creating .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish packages & create release
         id: changesets
         uses: changesets/action@v1
