@@ -26,7 +26,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@hack-dance/agents-core": "*",
+    "@hack-dance/agents-core": "workspace:*",
     "openai": "^4.6.0",
     "tsconfig": "workspace:*",
     "tsup": "^6.4.0",
