@@ -40,7 +40,7 @@ Add the core agent utilities:
 npx @hackdance/agents add --path=src
 ```
 
-Optionally set up import aliases:
+Optionally set up import aliases (if you do not have these improt aliases setup, you will have to manually change the paths in the copied code.):
 ```json
 {
   "compilerOptions": {
