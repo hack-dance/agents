@@ -6,15 +6,19 @@ on:
       - closed
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
-
+permissions: {} #reset
 jobs:
   publish:
     if: github.repository == 'hack-dance/agents' && github.event.pull_request.merged == true && startsWith(github.head_ref, 'changeset-release/main')
+    permissions:
+      contents: write
+      pull-requests: write
+
     name: Publish packages
     runs-on: ubuntu-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}z
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
     steps:
       - name: Checkout Repo
