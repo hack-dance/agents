@@ -1,6 +1,6 @@
 {
   "name": "@hackdance/agents-cli",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://dimitrikennedy.com)",
   "repository": {
     "directory": "packages/cli",
