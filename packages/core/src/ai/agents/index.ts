@@ -70,7 +70,7 @@ export const createChatAgent = ({
   oaiClientConfiguration
 }: CreateChatAgentProps) => {
   const oai = new OpenAI({
-    apiKey: oaiClientConfiguration?.apiKey ?? process.env.OPENAI_API_KEY,
+    apiKey: oaiClientConfiguration?.apiKey ?? process.env.OPENAI_API_KEY ?? undefined,
     organization: oaiClientConfiguration?.organization ?? process.env.OPENAI_ORG_ID ?? undefined
   })
 
