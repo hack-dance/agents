@@ -6,7 +6,12 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-
+    "hack-dance-agents-hooks#build": {
+      "dependsOn": [
+        "^@hack-dance/agents-core#build",
+        "^@hack-dance/agents-hooks#build"
+      ]
+    },
     "@hack-dance/agents-hooks#build": {
       "dependsOn": [
         "^@hack-dance/agents-core#build"
