@@ -3,6 +3,7 @@ import { ReactNode } from "react"
 import { Metadata } from "next"
 import Link from "next/link"
 import { GitHubLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons"
+import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <main className="h-screen absolute top-0 w-full overflow-y-auto">{children}</main>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

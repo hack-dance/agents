@@ -47,6 +47,7 @@
     "@radix-ui/react-tooltip": "^1.0.6",
     "@tanstack/react-table": "^8.9.3",
     "@types/three": "^0.155.0",
+    "@vercel/analytics": "^1.0.2",
     "@vercel/kv": "^0.2.2",
     "avvvatars-react": "^0.4.2",
     "class-variance-authority": "^0.7.0",
