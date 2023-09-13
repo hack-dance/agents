@@ -6,5 +6,77 @@
 </span>
 
 ```ts
+"use client"
 
+import { useState } from "react"
+import { useChatStream } from "@/hooks/use-chat-stream"
+
+import { MessageList } from "@/components/message-list"
+import { PromptComposer } from "@/components/prompt-composer"
+
+export default function Chat({ conversation, updateConversation }) {
+  const [prompt, setPrompt] = useState("")
+  const ChatScrollerRef = useRef<HTMLDivElement>(null)
+
+  const scrollToEnd = ({ now = false }: { now?: boolean }) => {
+    ChatScrollerRef?.current?.scrollTo({
+      top: ChatScrollerRef?.current?.scrollHeight,
+      behavior: now ? "auto" : "smooth"
+    })
+  }
+
+  const { startStream, messages, loading } = useChatStream({
+    startingMessages: conversation?.messages,
+    onBeforeStart: async () => {
+      scrollToEnd({})
+      setPrompt("")
+    },
+    onEnd: ({ messagePair, messages: latestMessages }) => {
+      setPrompt("")
+    }
+  })
+
+  const sendMessage = async () => {
+    if (!prompt.length || loading) return
+
+    try {
+      startStream({
+        prompt,
+        url: "/api/ai/chat",
+        ctx: {}
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setPrompt(event.target.value ?? "")
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key === "Enter") {
+      event.preventDefault()
+      sendMessage()
+    }
+  }
+
+  return (
+    <div className="h-full flex flex-col justify-between py-4 overflow-hidden">
+      <div className=" overflow-y-auto p-8" ref={ChatScrollerRef}>
+        <MessageList messages={messages} />
+      </div>
+
+      <div className="p-8">
+        <PromptComposer
+          loading={loading}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+          onSubmit={sendMessage}
+          prompt={prompt}
+        />
+      </div>
+    </div>
+  )
+}
 ```

@@ -16,6 +16,10 @@ type CreateAgentConfig = Omit<OpenAI.Chat.ChatCompletionCreateParams, "messages"
 export interface CreateChatAgentProps {
   config: CreateAgentConfig
   identityMessages: OpenAI.Chat.ChatCompletionMessageParam[]
+  oaiClientConfiguration?: {
+    apiKey?: string
+    organization?: string
+  }
 }
 
 export interface CreateSchemaAgentProps extends CreateChatAgentProps {
@@ -60,10 +64,14 @@ export type SchemaAgentInstance = ChatAgentInstance
  * const stream = chatAgent.completionStream({ prompt: "", messages: [] });
  * ```
  */
-export const createChatAgent = ({ config, identityMessages }: CreateChatAgentProps) => {
+export const createChatAgent = ({
+  config,
+  identityMessages,
+  oaiClientConfiguration
+}: CreateChatAgentProps) => {
   const oai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    organization: process.env.OPENAI_ORG_ID ?? undefined
+    apiKey: oaiClientConfiguration?.apiKey ?? process.env.OPENAI_API_KEY,
+    organization: oaiClientConfiguration?.organization ?? process.env.OPENAI_ORG_ID ?? undefined
   })
 
   const agentInstance = {
