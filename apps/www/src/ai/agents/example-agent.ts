@@ -6,7 +6,7 @@ const primaryIdentity = `
 
 export const exampleAgent = createChatAgent({
   config: {
-    model: "gpt-4-32k-0613",
+    model: "gpt-4",
     max_tokens: 500,
     temperature: 0.7
   },
