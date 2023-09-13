@@ -4,8 +4,9 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+
     "@hack-dance/agents-hooks#build": {
       "dependsOn": [
         "^@hack-dance/agents-core#build"
