@@ -20,7 +20,7 @@
     "prepare-build": "turbo run prepare-build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "publish-packages": "turbo run build --filter='@hackdance/agents-cli' && changeset publish"
+    "publish-packages": "turbo run build --filter=@hackdance/agents-cli && changeset publish"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
