@@ -13,9 +13,13 @@
       ]
     },
     "@hack-dance/agents-hooks#build": {
+      "outputs": ["dist/**"],
       "dependsOn": [
         "^@hack-dance/agents-core#build"
       ]
+    },
+    "@hack-dance/agents-core#build": {
+      "outputs": ["dist/**"]
     },
     "lint": {},
     "dev": {
