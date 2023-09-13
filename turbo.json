@@ -13,7 +13,7 @@
     },
     "@hack-dance/agents-hooks#build": {
       "dependsOn": [
-        "@hack-dance/agent-hooks#build"
+        "@hack-dance/agents-hooks#build"
       ]
     },
     "lint": {},
