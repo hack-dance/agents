@@ -41,14 +41,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
-      - name: Creating .npmrc
-        run: |
-          cat << EOF > "$HOME/.npmrc"
-            //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          EOF
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Copy files to cli
         run: bun prepare-build
 
