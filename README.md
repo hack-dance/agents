@@ -1,5 +1,5 @@
 # @hack-dance/agents
-> Copy, Paste, AI: A Modular Toolkit for Building Intelligent Agents Beyond Chat Interfaces
+> Copy, Paste, AI: A modular toolkit for building more then just chat bots.
 
 [docs](https://agents.hack.dance)
 
