@@ -65,43 +65,43 @@ export const docs = [
       slug: "hooks/use-json-stream",
       id: "hooks--use-json-stream"
     }
-  ],
-  [
-    {
-      title: "Utilities",
-      slug: "utilities",
-      id: "utilities",
-      titlePage: true
-    },
-    {
-      title: "OAI Stream",
-      slug: "utilities/oai-stream",
-      id: "utilities--oai-stream"
-    },
-    {
-      title: "OAI FN executor",
-      slug: "utilities/oai-fn-executor",
-      id: "utilities--oai-fn-executor"
-    },
-    {
-      title: "OAI Response Parser",
-      slug: "utilities/oai-response-parser",
-      id: "utilities--oai-response-parser"
-    },
-    {
-      title: "Streaming JSON Parser",
-      slug: "utilities/streaming-json-parser",
-      id: "utilities--streaming-json-parser"
-    },
-    {
-      title: "Async Queue",
-      slug: "utilities/async-queue",
-      id: "utilities--async-queue"
-    },
-    {
-      title: "Log Generator",
-      slug: "utilities/log-generator",
-      id: "utilities--log-generator"
-    }
   ]
+  // [
+  //   {
+  //     title: "Utilities",
+  //     slug: "utilities",
+  //     id: "utilities",
+  //     titlePage: true
+  //   },
+  //   {
+  //     title: "OAI Stream",
+  //     slug: "utilities/oai-stream",
+  //     id: "utilities--oai-stream"
+  //   },
+  //   {
+  //     title: "OAI FN executor",
+  //     slug: "utilities/oai-fn-executor",
+  //     id: "utilities--oai-fn-executor"
+  //   },
+  //   {
+  //     title: "OAI Response Parser",
+  //     slug: "utilities/oai-response-parser",
+  //     id: "utilities--oai-response-parser"
+  //   },
+  //   {
+  //     title: "Streaming JSON Parser",
+  //     slug: "utilities/streaming-json-parser",
+  //     id: "utilities--streaming-json-parser"
+  //   },
+  //   {
+  //     title: "Async Queue",
+  //     slug: "utilities/async-queue",
+  //     id: "utilities--async-queue"
+  //   },
+  //   {
+  //     title: "Log Generator",
+  //     slug: "utilities/log-generator",
+  //     id: "utilities--log-generator"
+  //   }
+  // ]
 ]
