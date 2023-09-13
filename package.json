@@ -17,9 +17,10 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "typecheck": "tsc --noEmit",
+    "prepare-build": "turbo run prepare-build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "publish-packages": "turbo run build --filter='./packages/*' && changeset publish"
+    "publish-packages": "turbo run build --filter='@hackdance/agents-cli' && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",

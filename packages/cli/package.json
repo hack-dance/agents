@@ -1,5 +1,5 @@
 {
-  "name": "@hack-dance/agents-cli",
+  "name": "@hackdance/agents-cli",
   "version": "0.0.1",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://dimitrikennedy.com)",
   "repository": {
@@ -19,10 +19,12 @@
     "dist/**"
   ],
   "scripts": {
+    "prepare-build": "bun ./scripts/copy-src.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "TIMING=1 eslint src/**/*.ts* --fix",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "release": "changeset version"
   },
   "dependencies": {
     "chalk": "^5.3.0",
@@ -30,8 +32,10 @@
     "execa": "^8.0.1",
     "fs-extra": "^11.1.1",
     "node-fetch": "^3.3.2",
+    "openai": "^4.6.0",
     "ora": "^7.0.1",
     "prompts": "^2.4.2",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zod-to-json-schema": "^3.21.3"
   }
 }

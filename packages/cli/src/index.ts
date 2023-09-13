@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+
+// mostly ripped from: https://github.com/shadcn-ui/ui/blob/main/packages/cli/src/index.ts
 import { add } from "@/commands/add"
 
 
@@ -14,7 +16,7 @@ process.on("SIGTERM", () => process.exit(0))
 async function main() {
 
   const program = new Command()
-    .name("hackdance")
+    .name("hack-dance-agents")
     .description("Hack Dance CLI")
     .version(
       packageJson.version || "1.0.0",

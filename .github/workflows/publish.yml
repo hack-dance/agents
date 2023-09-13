@@ -20,13 +20,17 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          lfs: true
-          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8.6.9
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
 
       - name: Setup Node.js 18
         uses: actions/setup-node@v3
@@ -43,10 +47,13 @@ jobs:
       - name: Creating .npmrc
         run: |
           cat << EOF > "$HOME/.npmrc"
-            //npm.pkg.github.com/:_authToken=$NPM_TOKEN
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
           EOF
         env:
-          NPM_TOKEN: ${{ secrets.GH_PAT }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Copy files to cli
+        run: bun prepare-build
 
       - name: Publish packages & create release
         id: changesets
@@ -54,6 +61,7 @@ jobs:
         with:
           publish: pnpm publish-packages
           createGithubReleases: true
+
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          NODE_AUTH_TOKEN: ${{secrets.GH_PAT}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

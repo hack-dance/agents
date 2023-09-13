@@ -1,7 +1,7 @@
 {
   "name": "@hack-dance/agents-hooks",
   "version": "0.0.1",
-  "author": "Dimitri Kennedy <dimitri@sick.email> (https://dimitrikennedy.com)",
+  "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
     "directory": "packages/hooks",
     "type": "git",
@@ -10,6 +10,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
+  "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",

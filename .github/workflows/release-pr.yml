@@ -21,9 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          lfs: true
-          token: ${{ secrets.GH_PAT }}
-
+          fetch-depth: 0
 
       - name: setup node.js
         uses: actions/setup-node@v3
@@ -34,7 +32,10 @@ jobs:
         run: npm i pnpm@latest -g
 
       - name: Setup npmrc
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" > .npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" > .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 
       - name: Setup pnpm config
         run: pnpm config set store-dir $PNPM_CACHE_FOLDER
@@ -42,10 +43,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm i
 
-      - name: Create versions
+      - name: Create version PR
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          NODE_AUTH_TOKEN: ${{secrets.GH_PAT}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

@@ -1,3 +1,4 @@
+// mostly ripped from: https://github.com/shadcn-ui/ui/blob/main/packages/cli/src/commands/add.ts
 import { existsSync, promises as fs } from "fs"
 import path from "path"
 
@@ -7,6 +8,7 @@ import { execa } from "execa"
 import ora from "ora"
 import prompts from "prompts"
 import * as z from "zod"
+import { everything } from "@/src-files"
 
 const addOptionsSchema = z.object({
   components: z.array(z.string()).optional(),
@@ -15,42 +17,6 @@ const addOptionsSchema = z.object({
   cwd: z.string(),
   path: z.string().optional(),
 })
-
-const root_path = path.resolve(__dirname, "../../..")
-
-const everything = {
-  core: {
-    name: "core",
-    dependencies: ["openai", "zod", "zod-to-json-schema"],
-    dirs: ["utils", "ai/agents", "ai/fns"],
-    files: [{
-      name: "agent creators",
-      targetPath: "ai/agents",
-      fileName: "index.ts",
-      srcPath: `${root_path}/packages/core/src/ai/agents/index.ts`,
-    },{
-      name: "OAI utils",
-      targetPath: "utils",
-      fileName: "oai.ts",
-      srcPath: `${root_path}/packages/core/src/utils/oai.ts`,
-    },{
-      name: "OAI stream util",
-      targetPath: "utils",
-      fileName: "oai-stream.ts",
-      srcPath: `${root_path}/packages/core/src/utils/oai-stream.ts`,
-    },{
-      name: "OAI fns",
-      targetPath: "ai/fns",
-      fileName: "index.ts",
-      srcPath: `${root_path}/packages/core/src/ai/fns/index.ts`,
-    },{
-      name: "OAI Schema FN",
-      targetPath: "ai/fns",
-      fileName: "schema.ts",
-      srcPath: `${root_path}/packages/core/src/ai/fns/schema.ts`,
-    }]
-  }
-}
 
 export const add = new Command()
   .name("add")
@@ -142,6 +108,7 @@ export const add = new Command()
             )
             process.exit(1)
           }
+
           continue
         }
 
