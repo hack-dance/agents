@@ -295,6 +295,9 @@ importers:
         specifier: ^3.21.3
         version: 3.21.3(zod@3.21.4)
     devDependencies:
+      tsconfig:
+        specifier: '*'
+        version: 7.0.0
       tsup:
         specifier: ^6.4.0
         version: 6.7.0(postcss@8.4.25)(typescript@5.2.2)

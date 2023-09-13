@@ -1,1 +1,2 @@
-# agents
+# @hack-dance/agents
+
