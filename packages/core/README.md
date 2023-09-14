@@ -1,6 +1,10 @@
 # @hackdance/agents-core
 A set of utilities to make working with open ai simpler.
 
+See the full docs and example usage here: [Docs](https://agents.hack.dance).
+
+There is also a package with react hooks that make it simple to interact with these agents in a react app: [@hackdance/agents-hooks](https://agents.hack.dance)
+
 
 
 ## Getting Started
@@ -188,35 +192,6 @@ import { OAIResponseFnArgsParser } from '@hackdance/agents-core';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const argumentsStream = OAIResponseFnArgsParser(stream)
-```
-
-
-**Streaming JSON parser**
-not specific to openAi, but generally usefull for parsing json streams
-as it becomes available.
-
-```ts
- const functionParamaterSchema = z.object({
-   name: z.string(),
-   age: z.number()
- });
-
-
-const functionStream = await fetch("https://api.openai.com/completion", {
-  ...options,
-  body: JSON.stringify({
-    ...openAiConfig,
-    functions: [{
-      name: "My Function",
-      description: "A function that returns a person's name and age.",
-      paramaters: zodToJson(functionParamaterSchema)
-    }]
-  })
-})
-
-const argumentsStream = OAIResponseFnArgsParser(stream)
-const parser = JsonStreamParser(schema);
-argumentsStream?.pipeThrough(parser)
 ```
 
 
