@@ -1,5 +1,5 @@
 {
-  "name": "@hack-dance/agents-core",
+  "name": "@hackdance/agents-core",
   "version": "0.0.2",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
@@ -7,10 +7,6 @@
     "type": "git",
     "url": "https://github.com/hack-dance/agents.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
-  "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -36,7 +32,6 @@
     "zod": ">=3.21.4"
   },
   "dependencies": {
-    "@streamparser/json": "^0.0.15",
     "eventsource-parser": "^1.0.0",
     "ramda": "^0.29.0",
     "zod-to-json-schema": "^3.21.3"

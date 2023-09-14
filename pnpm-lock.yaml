@@ -59,10 +59,10 @@ importers:
 
   apps/www:
     dependencies:
-      '@hack-dance/agents-core':
+      '@hackdance/agents-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@hack-dance/agents-hooks':
+      '@hackdance/agents-hooks':
         specifier: '*'
         version: link:../../packages/hooks
       '@hookform/resolvers':
@@ -310,9 +310,6 @@ importers:
 
   packages/core:
     dependencies:
-      '@streamparser/json':
-        specifier: ^0.0.15
-        version: 0.0.15
       eventsource-parser:
         specifier: ^1.0.0
         version: 1.0.0
@@ -381,10 +378,10 @@ importers:
         specifier: ^0.29.0
         version: 0.29.0
       react:
-        specifier: 18.2.0
+        specifier: '>=18.2.0'
         version: 18.2.0
     devDependencies:
-      '@hack-dance/agents-core':
+      '@hackdance/agents-core':
         specifier: workspace:*
         version: link:../core
       openai:
@@ -5941,6 +5938,7 @@ packages:
 
   /loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
     dependencies:
       js-tokens: 4.0.0
     dev: false

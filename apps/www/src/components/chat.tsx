@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useChatStream } from "@hack-dance/agents-hooks"
+import { useChatStream } from "@hackdance/agents-hooks"
 
 import { FloatingChat } from "@/components/floating-chat"
 import { PromptComposer } from "@/components/prompt-composer"

@@ -1,4 +1,4 @@
-# @hack-dance/agents-core
+# @hackdance/agents-core
 
 ## 0.0.2
 
