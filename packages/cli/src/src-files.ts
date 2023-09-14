@@ -11,6 +11,7 @@ const root_path =
     ? path.resolve(__dirname, "../template-files")
     : path.resolve(__dirname, "../../../packages")
 
+
 export const everything = {
   core: {
     name: "core",
