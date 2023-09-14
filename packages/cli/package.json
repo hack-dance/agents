@@ -20,7 +20,8 @@
   "sideEffects": false,
   "license": "MIT",
   "files": [
-    "dist/**"
+    "dist/**",
+    "template-files/**"
   ],
   "scripts": {
     "prepare-build": "bun ./scripts/copy-src.ts",
