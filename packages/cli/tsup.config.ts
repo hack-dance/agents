@@ -7,7 +7,7 @@ export default defineConfig(options => {
     watch: options.watch,
     sourcemap: true,
     minify: true,
-    format: ["esm"],
+    format: ["esm", "cjs"],
     target: "esnext",
     outDir: "dist",
   }

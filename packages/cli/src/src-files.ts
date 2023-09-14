@@ -1,5 +1,9 @@
-import path from "path"
 import fs from "fs"
+import { fileURLToPath } from 'url'
+import path, { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const hasLocalFiles = fs.existsSync(path.resolve(__dirname, "../template-files"))
 const root_path = hasLocalFiles && !process?.argv?.[1]?.includes("copy-src")
