@@ -64,8 +64,8 @@ export const everything = {
   },
   hooks: {
     name: "hooks",
-    dependencies: [],
-    dirs: ["hooks"],
+    dependencies: ["zod", "ramda", "@streamparser/json"],
+    dirs: ["hooks", "utils"],
     files: [
       {
         name: "use-chat-stream",
@@ -78,6 +78,12 @@ export const everything = {
         targetPath: `hooks`,
         fileName: "use-json-stream.ts",
         srcPath: `${root_path_hooks}/hooks/use-json-stream.ts`
+      },
+      {
+        name: "streaming-json-parser",
+        targetPath: `utils`,
+        fileName: "streaming-json-parser.ts",
+        srcPath: `${root_path_hooks}/utils/streaming-json-parser.ts`
       }
     ]
   }

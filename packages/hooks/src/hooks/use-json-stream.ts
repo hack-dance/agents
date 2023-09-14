@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { JsonStreamParser } from "@hack-dance/agents-core"
 import OpenAI from "openai"
 import z from "zod"
+
+import { JsonStreamParser } from "@/utils/streaming-json-parser"
 
 type OnEndArgs = {
   createdAt: number
