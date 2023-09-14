@@ -1,5 +1,11 @@
 # @hack-dance/agents-hooks
 
+## 0.0.3
+
+### Patch Changes
+
+- [#19](https://github.com/hack-dance/agents/pull/19) [`368f8bc`](https://github.com/hack-dance/agents/commit/368f8bc3b3c3d09ccfd45eb2d6b1ffcadb430d73) Thanks [@roodboi](https://github.com/roodboi)! - move json parser to hooks file to avoid cross packagei mports + add to src index + package manager resolution
+
 ## 0.0.2
 
 ### Patch Changes
