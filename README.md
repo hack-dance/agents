@@ -38,7 +38,7 @@ pnpm add openai zod
 
 Add the core agent utilities:
 ```bash
-npx @hackdance/agents add --path=src
+  npx @hackdance/agents-cli add --path=src
 ```
 
 Optionally set up import aliases (if you do not have these improt aliases setup, you will have to manually change the paths in the copied code.):
