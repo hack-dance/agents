@@ -1,6 +1,6 @@
 {
   "name": "@hack-dance/agents-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
     "directory": "packages/core",

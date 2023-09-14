@@ -1,5 +1,15 @@
 # hack-dance-agents
 
+## 0.1.2
+
+### Patch Changes
+
+- [`349e315`](https://github.com/hack-dance/agents/commit/349e315ecb104423cf20eccbd3c4b64b60c732f0) Thanks [@roodboi](https://github.com/roodboi)! - fix rooth path resolution
+
+- Updated dependencies [[`349e315`](https://github.com/hack-dance/agents/commit/349e315ecb104423cf20eccbd3c4b64b60c732f0)]:
+  - @hack-dance/agents-core@0.0.2
+  - @hack-dance/agents-hooks@0.0.2
+
 ## 0.1.1
 
 ### Patch Changes
