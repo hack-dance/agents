@@ -1,23 +1,21 @@
 # use-json-stream
 
 **Usage**
-<span>
-  `@/components/joke-critic.tsx`
-</span>
+
+<span>`@/components/joke-critic.tsx`</span>
 
 ```ts
 "use client"
 
 import { useState } from "react"
+
 import { useJsonStream } from "@/hooks/use-json-stream"
 import { PromptComposer } from "@/components/prompt-composer"
-
 import { jokeCriticScema } from "@/ai/agents/joke-critic-agent"
 
 export default function JokeCritic({ conversation, updateConversation }) {
   const [prompt, setPrompt] = useState("")
   const [response, setResponse] = useState({})
-
 
   const { startStream, stopStream, loading } = useJsonStream({
     onReceive: data => {
