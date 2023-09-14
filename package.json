@@ -9,6 +9,7 @@
   "scripts": {
     "clean": "turbo run clean",
     "dev": "turbo run dev",
+    "chat:dev": "turbo run dev --filter='!hack-dance-agents'",
     "build": "turbo run build",
     "start": "turbo run start",
     "lint": "turbo run lint",
