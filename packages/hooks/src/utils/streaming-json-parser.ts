@@ -77,23 +77,27 @@ export const JsonStreamParser = (
   const jsonparser = new JSONParser()
 
   jsonparser.onToken = ({ token, value }) => {
-    if ((token === TokenType.STRING || token === TokenType.NUMBER) && !isKey && activeKey) {
-      schemaInstance[activeKey] = value as string
-      activeKey = null
-    }
+    try {
+      if ((token === TokenType.STRING || token === TokenType.NUMBER) && !isKey && activeKey) {
+        schemaInstance[activeKey] = value as string
+        activeKey = null
+      }
 
-    if (
-      (token === TokenType.STRING || token === TokenType.NUMBER) &&
-      schemaInstance.hasOwnProperty(value as string | number) &&
-      (typeof schemaInstance[value as string] === "string" ||
-        typeof schemaInstance[value as string] === "number")
-    ) {
-      activeKey = value as string | number
-      isKey = true
-    }
+      if (
+        (token === TokenType.STRING || token === TokenType.NUMBER) &&
+        schemaInstance.hasOwnProperty(value as string | number) &&
+        (typeof schemaInstance[value as string] === "string" ||
+          typeof schemaInstance[value as string] === "number")
+      ) {
+        activeKey = value as string | number
+        isKey = true
+      }
 
-    if (isKey && activeKey && token === TokenType.COLON) {
-      isKey = false
+      if (isKey && activeKey && token === TokenType.COLON) {
+        isKey = false
+      }
+    } catch (e) {
+      console.error(`Error in the json parser onToken handler: token ${token} value ${value}`, e)
     }
   }
 
@@ -115,7 +119,7 @@ export const JsonStreamParser = (
         jsonparser.write(chunk)
         controller.enqueue(textEncoder.encode(JSON.stringify(schemaInstance)))
       } catch (e) {
-        console.error(e)
+        console.error(`Error in the json parser transform stream: parsing chunk ${chunk}`, e)
       }
     },
     flush(_controller) {

@@ -11,9 +11,9 @@ import { useState } from "react"
 
 import { useJsonStream } from "@/hooks/use-json-stream"
 import { PromptComposer } from "@/components/prompt-composer"
-import { jokeCriticScema } from "@/ai/agents/joke-critic-agent"
+import { jokeCriticScema } from "@/ai/agents/joke-critic-agent/schema"
 
-export default function JokeCritic({ conversation, updateConversation }) {
+export default function JokeCritic() {
   const [prompt, setPrompt] = useState("")
   const [response, setResponse] = useState({})
 

@@ -81,18 +81,23 @@ export const createChatAgent = ({
       messages = [],
       stream = true
     }: AgentCompletionStreamProps & { stream?: boolean }) => {
-      const response = await oai.chat.completions.create({
-        temperature: 0.7,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-        n: 1,
-        ...config,
-        messages: [...identityMessages, ...messages, { role: "user", content: prompt }],
-        stream
-      } as OpenAI.Chat.ChatCompletionCreateParams)
+      try {
+        const response = await oai.chat.completions.create({
+          temperature: 0.7,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+          n: 1,
+          ...config,
+          messages: [...identityMessages, ...messages, { role: "user", content: prompt }],
+          stream
+        } as OpenAI.Chat.ChatCompletionCreateParams)
 
-      return response
+        return response
+      } catch (error) {
+        console.error("@hackdance/agents-core error agent instance error", error)
+        throw new Error(error)
+      }
     },
     completion: async ({ prompt, messages = [] }: AgentCompletionStreamProps) => {
       const response = await agentInstance._completion({ prompt, messages, stream: false })

@@ -1,16 +1,12 @@
 {
-  "name": "@hack-dance/agents-hooks",
-  "version": "0.0.3",
+  "name": "@hackdance/agents-hooks",
+  "version": "0.0.0",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
     "directory": "packages/hooks",
     "type": "git",
     "url": "https://github.com/hack-dance/agents.git"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
-  "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -26,16 +22,16 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@hack-dance/agents-core": "workspace:*",
+    "@hackdance/agents-core": "workspace:*",
     "openai": "^4.6.0",
     "tsconfig": "workspace:*",
     "tsup": "^6.4.0",
     "zod": "^3.21.4"
   },
   "peerDependencies": {
-    "@hack-dance/agents-core": "workspace:*",
+    "@hackdance/agents-core": "workspace:*",
     "openai": ">=4.6.0",
-    "react": "18.2.0",
+    "react": ">=18.2.0",
     "zod": ">=3.21.4"
   },
   "dependencies": {

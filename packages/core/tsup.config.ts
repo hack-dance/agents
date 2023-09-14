@@ -6,9 +6,9 @@ export default defineConfig(options => {
     dts: true,
     watch: options.watch,
     sourcemap: true,
-    minify: false,
+    minify: true,
     target: "es2020",
     format: ["cjs", "esm"],
-    external: ["openai"]
+    external: ["openai", "zod"]
   }
 })

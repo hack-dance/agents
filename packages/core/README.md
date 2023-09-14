@@ -1,12 +1,16 @@
-# @hack-dance/agents-core
+# @hackdance/agents-core
 A set of utilities to make working with open ai simpler.
+
+See the full docs and example usage here: [Docs](https://agents.hack.dance).
+
+There is also a package with react hooks that make it simple to interact with these agents in a react app: [@hackdance/agents-hooks](https://agents.hack.dance)
 
 
 
 ## Getting Started
 
 ```bash
-pnpm add @hack-dance/agents-core
+pnpm add @hackdance/agents-core
 ```
 
 
@@ -24,7 +28,7 @@ __
 **Chat Agent Example:**
 
 ```ts
-import { createChatAgent } from '@hack-dance/agents-core';
+import { createChatAgent } from '@hackdance/agents-core';
 
 const myAgent = createChatAgent({
   config: {
@@ -56,7 +60,7 @@ use the structured response immeadiately, and not have to wait for the ai to fin
 completing the response.
 
 ```ts
-import { createSchemaAgent } from '@hack-dance/agents-core';
+import { createSchemaAgent } from '@hackdance/agents-core';
 
 const myAgent = createSchemaAgent({
   config: {
@@ -94,7 +98,7 @@ Anythign returned by the api will first be validated against your provided schem
 
 Creating and using your own function definitions
 ```ts
-import { createFunctionDefinition } from '@hack-dance/agents-core';
+import { createFunctionDefinition } from '@hackdance/agents-core';
 
 const getArticlesFn = createFunctionDefinition({
   name: "Internal Api Request",
@@ -153,7 +157,7 @@ The agent creators implement these tools internally, so you don't need to use th
 **Stream Utilities:**
 
 ```ts
-import { OaiStream } from '@hack-dance/agents-core';
+import { OaiStream } from '@hackdance/agents-core';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const parsedStream = OaiStream(stream)
@@ -165,7 +169,7 @@ const parsedStream = OaiStream(stream)
 
 **Auto parser**
 ```ts
-import { OaiStream } from '@hack-dance/agents-core';
+import { OaiStream } from '@hackdance/agents-core';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const parsedStream = OaiStream(stream)
@@ -176,7 +180,7 @@ const parsedStream = OaiStream(stream)
 
 **Default parser**
 ```ts
-import { OAIResponseTextParser } from '@hack-dance/agents-core';
+import { OAIResponseTextParser } from '@hackdance/agents-core';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const textStream = OAIResponseTextParser(stream)
@@ -184,39 +188,10 @@ const textStream = OAIResponseTextParser(stream)
 
 **Function parser**
 ```ts
-import { OAIResponseFnArgsParser } from '@hack-dance/agents-core';
+import { OAIResponseFnArgsParser } from '@hackdance/agents-core';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const argumentsStream = OAIResponseFnArgsParser(stream)
-```
-
-
-**Streaming JSON parser**
-not specific to openAi, but generally usefull for parsing json streams
-as it becomes available.
-
-```ts
- const functionParamaterSchema = z.object({
-   name: z.string(),
-   age: z.number()
- });
-
-
-const functionStream = await fetch("https://api.openai.com/completion", {
-  ...options,
-  body: JSON.stringify({
-    ...openAiConfig,
-    functions: [{
-      name: "My Function",
-      description: "A function that returns a person's name and age.",
-      paramaters: zodToJson(functionParamaterSchema)
-    }]
-  })
-})
-
-const argumentsStream = OAIResponseFnArgsParser(stream)
-const parser = JsonStreamParser(schema);
-argumentsStream?.pipeThrough(parser)
 ```
 
 
@@ -227,7 +202,7 @@ argumentsStream?.pipeThrough(parser)
 Basic first in first out queue. Useful for managing async operations.
 
 ```ts
-import { AsyncQueue } from '@hack-dance/agents-core';
+import { AsyncQueue } from '@hackdance/agents-core';
  const queue = new AsyncQueue<number>();
  queue.push(1);
  queue.push(2);
@@ -242,7 +217,7 @@ import { AsyncQueue } from '@hack-dance/agents-core';
 
 ```ts
 // somewhere in your async code
-import { LogGenerator } from '@hack-dance/agents-core';
+import { LogGenerator } from '@hackdance/agents-core';
 
 export const myAsyncLogs = new LogGenerator();
 

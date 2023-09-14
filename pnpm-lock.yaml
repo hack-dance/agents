@@ -59,10 +59,10 @@ importers:
 
   apps/www:
     dependencies:
-      '@hack-dance/agents-core':
+      '@hackdance/agents-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@hack-dance/agents-hooks':
+      '@hackdance/agents-hooks':
         specifier: '*'
         version: link:../../packages/hooks
       '@hookform/resolvers':
@@ -310,9 +310,6 @@ importers:
 
   packages/core:
     dependencies:
-      '@streamparser/json':
-        specifier: ^0.0.15
-        version: 0.0.15
       eventsource-parser:
         specifier: ^1.0.0
         version: 1.0.0
@@ -381,10 +378,10 @@ importers:
         specifier: ^0.29.0
         version: 0.29.0
       react:
-        specifier: 18.2.0
+        specifier: '>=18.2.0'
         version: 18.2.0
     devDependencies:
-      '@hack-dance/agents-core':
+      '@hackdance/agents-core':
         specifier: workspace:*
         version: link:../core
       openai:
@@ -429,7 +426,6 @@ packages:
 
   /@antfu/ni@0.21.8:
     resolution: {integrity: sha512-90X8pU2szlvw0AJo9EZMbYc2eQKkmO7mAdC4tD4r5co2Mm56MT37MIG8EyB7p4WRheuzGxuLDxJ63mF6+Zajiw==}
-    hasBin: true
     dev: false
 
   /@babel/code-frame@7.21.4:
@@ -3680,7 +3676,6 @@ packages:
   /autoprefixer@10.4.13(postcss@8.4.25):
     resolution: {integrity: sha512-49vKpMqcZYsJjwotvt4+h/BCjJVnhGwcLpDt5xkcaOG3eLrG/HUYLagrihYsQ+qrIBgIzX1Rw7a6L8I/ZA1Atg==}
     engines: {node: ^10 || ^12 || >=14}
-    hasBin: true
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
@@ -4493,7 +4488,6 @@ packages:
 
   /eslint-config-prettier@9.0.0(eslint@8.36.0):
     resolution: {integrity: sha512-IcJsTkJae2S35pRsRAwoCE+925rJJStOdkKnLVgtE+tEpqU0EVVM7OqrwxqgptKdX29NUwC82I5pXsGFIgSevw==}
-    hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
     dependencies:
@@ -6518,7 +6512,6 @@ packages:
   /next@13.4.13(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-A3YVbVDNeXLhWsZ8Nf6IkxmNlmTNz0yVg186NJ97tGZqPDdPzTrHotJ+A1cuJm2XfuWPrKOUZILl5iBQkIf8Jw==}
     engines: {node: '>=16.8.0'}
-    hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
       react: ^18.2.0
@@ -8059,7 +8052,6 @@ packages:
   /tsup@6.7.0(postcss@8.4.25)(typescript@5.2.2):
     resolution: {integrity: sha512-L3o8hGkaHnu5TdJns+mCqFsDBo83bJ44rlK7e6VdanIvpea4ArPcU3swWGsLVbXak1PqQx/V+SSmFPujBK+zEQ==}
     engines: {node: '>=14.18'}
-    hasBin: true
     peerDependencies:
       '@swc/core': ^1
       postcss: ^8.4.12
@@ -8322,7 +8314,6 @@ packages:
 
   /update-browserslist-db@1.0.11(browserslist@4.21.5):
     resolution: {integrity: sha512-dCwEFf0/oT85M1fHBg4F0jtLwJrutGoHSQXCh7u4o2t1drG+c0a9Flnqww6XUKSfQMPpJBRjU8d4RXB09qtvaA==}
-    hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
     dependencies:

@@ -102,6 +102,7 @@ export function useJsonStream({
       })
 
       if (!response.ok) {
+        console.error(`error calling stream url ${url}: ${response.statusText}`)
         throw new Error(response.statusText)
       }
 
@@ -164,6 +165,7 @@ export function useJsonStream({
         abortControllerRef.current = null
         return null
       }
+      console.error(`error in chat stream hook`, err)
       throw err
     } finally {
       setLoading(false)

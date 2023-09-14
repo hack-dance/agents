@@ -62,6 +62,7 @@ function createFunctionDefinition<P extends z.ZodType<unknown>, R extends z.ZodT
       const validatedParams = paramsSchema.parse(params)
       return await execute(validatedParams)
     } catch (error) {
+      console.error(`Error executing function ${name}:`, error)
       throw error
     }
   }
