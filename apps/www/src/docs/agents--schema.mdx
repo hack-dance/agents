@@ -1,22 +1,18 @@
-
 # Schema Agent
-Schema agents extend OpenAi functions by providing a small abstraction that allows you to write
-a schema for the data that you want to receive from the AI using Zod. Optionally, you can also
-provide a description for each field in the schema.
+
+Schema agents extend OpenAi functions by providing a small abstraction that allows you to write a schema for the data that you want to receive from the AI using Zod. Optionally, you can also provide a description for each field in the schema.
 
 We also provide a <Link href="/docs/hooks/use-json-stream">hook</Link> for consuming json from these schema agents, that uses the schema to provide partial json streaming so you can start using the data as soon as the first chunk comes through.
 
-
 **Agent Definition**
-<span>
-  `@/ai/agents/joke-agent.ts`
-</span>
+
+<span>`@/ai/agents/joke-agent.ts`</span>
 
 ```ts
-import { createSchemaAgent } from "@/ai/agents"
 import OpenAI from "openai"
-
 import z from "zod"
+
+import { createSchemaAgent } from "@/ai/agents"
 
 export const jokeAgentSchema = z.object({
   content: z.string({
@@ -46,14 +42,11 @@ export const jokeAgent = createSchemaAgent({
   ],
   schema: scoreAgentSchema
 })
-
 ```
 
-
 **Streaming**
-<span>
-  `@/app/api/chat/route.ts`
-</span>
+
+<span>`@/app/api/chat/route.ts`</span>
 
 ```ts
 import { exampleAgent } from "@/ai/agents/example-agent"
@@ -75,6 +68,3 @@ export async function POST(request: Request): Promise<Response> {
   }
 }
 ```
-
-
-

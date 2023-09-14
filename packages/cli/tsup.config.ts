@@ -9,6 +9,6 @@ export default defineConfig(options => {
     minify: true,
     format: ["esm", "cjs"],
     target: "esnext",
-    outDir: "dist",
+    outDir: "dist"
   }
 })

@@ -1,21 +1,20 @@
 // mostly ripped from: https://github.com/shadcn-ui/ui/blob/main/packages/cli/src/commands/add.ts
 import { existsSync, promises as fs } from "fs"
 import path from "path"
-
+import { everything } from "@/src-files"
 import chalk from "chalk"
 import { Command } from "commander"
 import { execa } from "execa"
 import ora from "ora"
 import prompts from "prompts"
 import * as z from "zod"
-import { everything } from "@/src-files"
 
 const addOptionsSchema = z.object({
   components: z.array(z.string()).optional(),
   yes: z.boolean(),
   overwrite: z.boolean(),
   cwd: z.string(),
-  path: z.string().optional(),
+  path: z.string().optional()
 })
 
 export const add = new Command()
@@ -34,7 +33,7 @@ export const add = new Command()
     try {
       const options = addOptionsSchema.parse({
         components,
-        ...opts,
+        ...opts
       })
 
       const cwd = path.resolve(options.cwd)
@@ -47,13 +46,16 @@ export const add = new Command()
           message: "Which components would you like to add?",
           hint: "Space to select. A to toggle all. Enter to submit.",
           instructions: false,
-          choices: [{
-            title: "Agents Core",
-            value: "core"
-          }, {
-            title: "React hooks",
-            value: "hooks"
-          }],
+          choices: [
+            {
+              title: "Agents Core",
+              value: "core"
+            },
+            {
+              title: "React hooks",
+              value: "hooks"
+            }
+          ]
         })
 
         selectedComponents = components
@@ -63,13 +65,12 @@ export const add = new Command()
         console.warn("No components selected. Exiting.")
         process.exit(0)
       }
-      const payload = selectedComponents.map((component) => everything[component])
+      const payload = selectedComponents.map(component => everything[component])
 
       if (!payload.length) {
         console.warn("Selected components not found. Exiting.")
         process.exit(0)
       }
-
 
       const spinner = ora(`Installing components...`).start()
 
@@ -80,7 +81,6 @@ export const add = new Command()
         if (!existsSync(targetDir)) {
           await fs.mkdir(targetDir, { recursive: true })
         }
-
 
         const srcDir = path.resolve(targetDir, "src")
 
@@ -95,7 +95,7 @@ export const add = new Command()
           }
         }
 
-        const existingComponent = item.files.filter((file) =>
+        const existingComponent = item.files.filter(file =>
           existsSync(path.resolve(targetDir, file.targetPath, file.fileName))
         )
 
@@ -127,18 +127,14 @@ export const add = new Command()
           await fs.copyFile(sourcePath, targetPath)
         }
 
-
         if (item.dependencies?.length) {
           const packageManager = "pnpm" as "pnpm" | "yarn" | "npm" | "bun"
 
           await execa(
             packageManager,
-            [
-              packageManager === "npm" ? "install" : "add",
-              ...item.dependencies,
-            ],
+            [packageManager === "npm" ? "install" : "add", ...item.dependencies],
             {
-              cwd,
+              cwd
             }
           )
         }
