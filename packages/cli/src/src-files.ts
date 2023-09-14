@@ -64,13 +64,13 @@ export const everything = {
         name: "use-chat-stream",
         targetPath: `hooks`,
         fileName: "use-chat-stream.ts",
-        srcPath: `${root_path}hooks/src/hooks/use-chat-stream.ts`
+        srcPath: `${root_path}/hooks/src/hooks/use-chat-stream.ts`
       },
       {
         name: "use-json-stream",
         targetPath: `hooks`,
         fileName: "use-json-stream.ts",
-        srcPath: `${root_path}hooks/src/hooks/use-json-stream.ts`
+        srcPath: `${root_path}/hooks/src/hooks/use-json-stream.ts`
       }
     ]
   }
