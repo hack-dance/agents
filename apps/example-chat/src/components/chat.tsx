@@ -44,10 +44,10 @@ export function Chat() {
   }
 
   return (
-    <div className="">
-      <h1>Chat</h1>
-
-      <FloatingChat messages={messages} />
+    <div className="flex flex-col max-h-full">
+      <div className="max-h-full overflow-y-auto flex-1 px-12 py-8">
+        <FloatingChat messages={messages} />
+      </div>
 
       <PromptComposer
         loading={loading}

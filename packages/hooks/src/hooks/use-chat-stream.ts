@@ -55,6 +55,7 @@ export function useChatStream({
 }: UseChatStreamProps): UseChatStreamPayload {
   const [manualRenders, setManualRenders] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [_currentStream, setCurrentStream] = useState("")
 
   const abortControllerRef = useRef<AbortController | null>(null)
   const messagesRef = useRef<Messages>(startingMessages)
@@ -147,6 +148,7 @@ export function useChatStream({
         onReceive && onReceive(chunkValue)
         setMessages([...newMessages, { role: "assistant", content: result }])
 
+        setCurrentStream(result)
         if (done) {
           onEnd &&
             onEnd({
