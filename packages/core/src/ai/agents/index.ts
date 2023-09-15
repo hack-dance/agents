@@ -10,7 +10,6 @@ import { OaiStream } from "@/utils/oai-stream"
  * Omit the messages property from the CreateChatCompletionRequest.
  * @template T Object type to be filtered
  */
-
 type CreateAgentConfig = Omit<OpenAI.Chat.ChatCompletionCreateParams, "messages">
 
 export interface CreateChatAgentProps {
