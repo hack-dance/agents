@@ -1,5 +1,14 @@
 # @hackdance/agents-hooks
 
+## 0.0.2
+
+### Patch Changes
+
+- [#25](https://github.com/hack-dance/agents/pull/25) [`a4bca0e`](https://github.com/hack-dance/agents/commit/a4bca0ec82a1965837510f0ff7f906652b1de341) Thanks [@roodboi](https://github.com/roodboi)! - update chat app example and re-add noop state setter to chat hook
+
+- Updated dependencies [[`a4bca0e`](https://github.com/hack-dance/agents/commit/a4bca0ec82a1965837510f0ff7f906652b1de341)]:
+  - @hackdance/agents-core@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes
