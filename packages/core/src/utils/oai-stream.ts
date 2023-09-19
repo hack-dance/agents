@@ -13,7 +13,8 @@ interface OaiStreamArgs {
  * @param {OaiStreamArgs} args - The arguments for the function.
  * @returns {ReadableStream<string>} - The created ReadableStream.
  */
-export function OaiStream({ res }: OaiStreamArgs): ReadableStream<string> {
+export function OaiStream({ res }: OaiStreamArgs): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder()
   let cancelGenerator: () => void
 
   async function* generateStream(res): AsyncGenerator<string> {
@@ -31,8 +32,9 @@ export function OaiStream({ res }: OaiStreamArgs): ReadableStream<string> {
   return new ReadableStream({
     async start(controller) {
       for await (const parsedData of generator) {
-        controller.enqueue(parsedData)
+        controller.enqueue(encoder.encode(parsedData))
       }
+
       controller.close()
     },
     cancel() {
