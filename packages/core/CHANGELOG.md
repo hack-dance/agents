@@ -1,5 +1,13 @@
 # @hackdance/agents-core
 
+## 0.0.3
+
+### Patch Changes
+
+- [#27](https://github.com/hack-dance/agents/pull/27) [`e68f608`](https://github.com/hack-dance/agents/commit/e68f608f69b57acbf67e0711f2ec279abf94accd) Thanks [@roodboi](https://github.com/roodboi)! - encode stream
+
+  Modified the return type of OaiStream from ReadableStream<string> to ReadableStream<Uint8Array>.
+
 ## 0.0.2
 
 ### Patch Changes

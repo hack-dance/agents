@@ -1,6 +1,6 @@
 {
   "name": "@hackdance/agents-hooks",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
     "directory": "packages/hooks",
