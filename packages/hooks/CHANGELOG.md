@@ -1,5 +1,12 @@
 # @hackdance/agents-hooks
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`e68f608`](https://github.com/hack-dance/agents/commit/e68f608f69b57acbf67e0711f2ec279abf94accd)]:
+  - @hackdance/agents-core@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
