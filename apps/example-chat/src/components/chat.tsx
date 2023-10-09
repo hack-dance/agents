@@ -1,17 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import { useChatStream } from "@hackdance/agents-hooks"
+import { useJsonStream } from "@hackdance/agents-hooks"
 
-import { FloatingChat } from "@/components/floating-chat"
 import { PromptComposer } from "@/components/prompt-composer"
+import { schema } from "@/ai/agents/schema"
 
 export function Chat() {
   const [prompt, setPrompt] = useState("")
   const [loading, setIsLoading] = useState(false)
 
-  const { startStream, messages } = useChatStream({
-    startingMessages: []
+  const { startStream, json } = useJsonStream({
+    schema: schema,
+    onEnd: resp => {
+      console.log("onEnd", resp)
+    }
   })
 
   const sendMessage = async () => {
@@ -46,7 +49,9 @@ export function Chat() {
   return (
     <div className="flex flex-col max-h-full">
       <div className="max-h-full overflow-y-auto flex-1 px-12 py-8">
-        <FloatingChat messages={messages} />
+        {`
+          json: ${JSON.stringify(json, null, 2)}
+        `}
       </div>
 
       <PromptComposer

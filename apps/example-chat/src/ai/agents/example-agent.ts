@@ -1,10 +1,12 @@
-import { createChatAgent } from "@hackdance/agents-core"
+import { createSchemaAgent } from "@hackdance/agents-core"
+
+import { schema } from "./schema"
 
 const primaryIdentity = `
   you are an ai that is good at everything.
 `
 
-export const exampleAgent = createChatAgent({
+export const exampleAgent = createSchemaAgent({
   config: {
     model: "gpt-4",
     max_tokens: 500,
@@ -15,5 +17,6 @@ export const exampleAgent = createChatAgent({
       role: "system",
       content: primaryIdentity
     }
-  ]
+  ],
+  schema: schema
 })

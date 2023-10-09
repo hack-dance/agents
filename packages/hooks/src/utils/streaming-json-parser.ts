@@ -1,5 +1,4 @@
 import { JSONParser, TokenType } from "@streamparser/json"
-import { assocPath } from "ramda"
 import { z } from "zod"
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,6 +14,8 @@ function getDefaultValue(type: z.ZodTypeAny): unknown {
       return false
     case "ZodArray":
       return []
+    case "ZodRecord":
+      return {}
     case "ZodObject":
       return createBlankObject(type as SchemaType)
     case "ZodOptional":
@@ -36,6 +37,34 @@ function createBlankObject(
   for (const key in schema.shape) {
     const type = schema.shape[key]
     obj[key] = getDefaultValue(type)
+  }
+
+  return obj
+}
+
+function setDeepValue(
+  obj: Record<string, any>,
+  path: (string | number)[],
+  value: any
+): Record<string, any> {
+  if (!path.length) return obj
+
+  let current = obj
+  for (let i = 0; i < path.length - 1; i++) {
+    if (!current[path[i]]) {
+      if (typeof path[i + 1] === "number") {
+        current[path[i]] = []
+      } else {
+        current[path[i]] = {}
+      }
+    }
+    current = current[path[i]]
+  }
+
+  if (Array.isArray(current) && typeof path[path.length - 1] === "number") {
+    current.push(value)
+  } else {
+    current[path[path.length - 1]] = value
   }
 
   return obj
@@ -67,34 +96,82 @@ export const JsonStreamParser = (
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: z.ZodObject<any>
 ) => {
-  let schemaInstance = createBlankObject(schema)
+  const pathStack: (string | number)[] = []
   let activeKey: string | number | null = null
   let isKey = false
+  let isInArray = false
+  let arrayIndex = 0
+  let schemaInstance = createBlankObject(schema)
 
   const textEncoder = new TextEncoder()
-  const decoder = new TextDecoder()
-
   const jsonparser = new JSONParser()
+
+  jsonparser.onValue = ({}) => {
+    //eslint-disable-next-line
+  }
+
+  function handleKeyValue(value: string | number) {
+    const fullPath = [...pathStack]
+    if (isInArray) {
+      fullPath.push(arrayIndex++)
+    } else {
+      fullPath.push(activeKey as string | number)
+    }
+
+    schemaInstance = setDeepValue(schemaInstance, fullPath, value)
+  }
 
   jsonparser.onToken = ({ token, value }) => {
     try {
-      if ((token === TokenType.STRING || token === TokenType.NUMBER) && !isKey && activeKey) {
-        schemaInstance[activeKey] = value as string
-        activeKey = null
-      }
+      switch (token) {
+        case TokenType.STRING:
+          if (isKey) {
+            activeKey = value as string
+          } else {
+            handleKeyValue(value as string)
+          }
+          break
 
-      if (
-        (token === TokenType.STRING || token === TokenType.NUMBER) &&
-        schemaInstance.hasOwnProperty(value as string | number) &&
-        (typeof schemaInstance[value as string] === "string" ||
-          typeof schemaInstance[value as string] === "number")
-      ) {
-        activeKey = value as string | number
-        isKey = true
-      }
+        case TokenType.NUMBER:
+          handleKeyValue(value as number)
+          break
 
-      if (isKey && activeKey && token === TokenType.COLON) {
-        isKey = false
+        case TokenType.LEFT_BRACE:
+          if (activeKey !== null) {
+            pathStack.push(activeKey)
+            activeKey = null
+          }
+          isKey = true
+          break
+
+        case TokenType.LEFT_BRACKET:
+          if (activeKey !== null) {
+            pathStack.push(activeKey)
+            activeKey = null
+          }
+          isInArray = true
+          arrayIndex = 0
+          break
+
+        case TokenType.RIGHT_BRACE:
+        case TokenType.RIGHT_BRACKET:
+          if (pathStack.length > 0) {
+            activeKey = pathStack.pop() as string | number
+          }
+          if (token === TokenType.RIGHT_BRACKET) {
+            isInArray = false
+            arrayIndex = 0
+          }
+          break
+
+        case TokenType.COLON:
+          isKey = false
+          break
+
+        case TokenType.COMMA:
+          activeKey = null
+          isKey = !isInArray
+          break
       }
     } catch (e) {
       console.error(`Error in the json parser onToken handler: token ${token} value ${value}`, e)
@@ -104,22 +181,10 @@ export const JsonStreamParser = (
   const stream = new TransformStream({
     async transform(chunk, controller): Promise<void> {
       try {
-        if (activeKey && !isKey) {
-          const decoded = decoder.decode(chunk)
-
-          const updatedContent = (schemaInstance[activeKey] += decoded)
-
-          if (updatedContent.length > 3 && updatedContent.startsWith('"')) {
-            schemaInstance = assocPath([activeKey], updatedContent.slice(1), schemaInstance)
-          } else {
-            schemaInstance = assocPath([activeKey], updatedContent, schemaInstance)
-          }
-        }
-
         jsonparser.write(chunk)
         controller.enqueue(textEncoder.encode(JSON.stringify(schemaInstance)))
       } catch (e) {
-        console.error(`Error in the json parser transform stream: parsing chunk ${chunk}`, e)
+        console.error(`Error in the json parser transform stream: parsing chunk`, e)
       }
     },
     flush(_controller) {

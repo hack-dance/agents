@@ -107,7 +107,6 @@ export function useJsonStream({
       }
 
       const parser = JsonStreamParser(schema)
-
       response.body?.pipeThrough(parser)
 
       let done = false
