@@ -12,10 +12,7 @@ export const schema = z.object({
   }),
   twoGoodThings: z.array(
     z.object({
-      name: z.string(),
-      aNestedThing: z.object({
-        aGreeting: z.string()
-      })
+      name: z.string()
     })
   )
 })

@@ -1,196 +1,345 @@
 import { JSONParser, TokenType } from "@streamparser/json"
-import { z } from "zod"
+import { pathOr } from "ramda"
+import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SchemaType = z.ZodObject<any>
-
-function getDefaultValue(type: z.ZodTypeAny): unknown {
-  switch (type._def.typeName) {
-    case "ZodString":
-      return ""
-    case "ZodNumber":
-      return 0
-    case "ZodBoolean":
-      return false
-    case "ZodArray":
-      return []
-    case "ZodRecord":
-      return {}
-    case "ZodObject":
-      return createBlankObject(type as SchemaType)
-    case "ZodOptional":
-      //eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return getDefaultValue((type as z.ZodOptional<any>).unwrap())
-    case "ZodNullable":
-      return null
-    default:
-      throw new Error(`Unsupported type: ${type._def.typeName}`)
-  }
-}
-
-function createBlankObject(
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: z.ZodObject<any>
-): object {
-  const obj: Record<string, unknown> = {}
-
-  for (const key in schema.shape) {
-    const type = schema.shape[key]
-    obj[key] = getDefaultValue(type)
-  }
-
-  return obj
-}
-
-function setDeepValue(
-  obj: Record<string, any>,
-  path: (string | number)[],
-  value: any
-): Record<string, any> {
-  if (!path.length) return obj
-
-  let current = obj
-  for (let i = 0; i < path.length - 1; i++) {
-    if (!current[path[i]]) {
-      if (typeof path[i + 1] === "number") {
-        current[path[i]] = []
-      } else {
-        current[path[i]] = {}
-      }
-    }
-    current = current[path[i]]
-  }
-
-  if (Array.isArray(current) && typeof path[path.length - 1] === "number") {
-    current.push(value)
-  } else {
-    current[path[path.length - 1]] = value
-  }
-
-  return obj
-}
+type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
+type NestedValue = string | number | NestedObject | NestedValue[]
+type NestedObject = { [key: string]: NestedValue } | { [key: number]: NestedValue }
 
 /**
- * `JsonStreamParser` creates a TransformStream that parses JSON data in a streaming manner.
- * The created stream uses the provided zod schema to determine the structure of the output data.
+ * `JsonStreamParser` is a utility class for parsing streams of json and
+ * providing a safe-read-from stubbed version of the data before the stream
+ * has fully completed.
  *
- * @param {SchemaType} schema - The zod schema that describes the structure of the data.
- * @returns {TransformStream} - The created TransformStream.
+ * It uses Zod for schema validation and the Streamparser library for
+ * parsing JSON from an input stream.
  *
  * @example
- *
+ * ```typescript
  * const schema = z.object({
- *   response: z.string(),
- *   score: z.number()
- * });
+ *   someString: z.string(),
+ *   someNumber: z.number()
+ * })
  *
- * const jsonStreamParser = JsonStreamParser(schema);
+ * const response = await getSomeStreamOfJson()
+ * const parser = new JsonStreamParser(schema)
+ * const streamParser = parser.parse()
  *
- * // in the browser
- * const stream = await getStream();
- * const parser = JsonStreamParser(schema)
- * stream?.pipeThrough(parser)
+ * response.body?.pipeThrough(parser)
  *
+ * const reader = streamParser.readable.getReader()
+ *
+ * const decoder = new TextDecoder()
+ * let result = {}
+ * while (!done) {
+ *   const { value, done: doneReading } = await reader.read()
+ *   done = doneReading
+ *
+ *   if (done) {
+ *     console.log(result)
+ *     break
+ *   }
+ *
+ *   const chunkValue = decoder.decode(value)
+ *   result = JSON.parse(chunkValue)
+ * }
+ * ```
+ *
+ * @public
  */
-export const JsonStreamParser = (
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: z.ZodObject<any>
-) => {
-  const pathStack: (string | number)[] = []
-  let activeKey: string | number | null = null
-  let isKey = false
-  let isInArray = false
-  let arrayIndex = 0
-  let schemaInstance = createBlankObject(schema)
+export class JsonStreamParser {
+  private pathStack: (string | number)[]
+  private activeKey: string | number | null
+  private isKey: boolean
+  private isInArray: boolean
+  private arrayIndex: number
+  private schemaInstance: NestedObject
+  private expectedArrayTypeStack: ("object" | "primitive")[]
 
-  const textEncoder = new TextEncoder()
-  const jsonparser = new JSONParser()
-
-  jsonparser.onValue = ({}) => {
-    //eslint-disable-next-line
+  /**
+   * Constructs a new instance of the `JsonStreamParser` class.
+   *
+   * @param schema - The Zod schema to use for validation.
+   */
+  constructor(private schema: SchemaType) {
+    this.pathStack = []
+    this.activeKey = null
+    this.isKey = false
+    this.isInArray = false
+    this.arrayIndex = 0
+    this.schemaInstance = this.createBlankObject(schema)
+    this.expectedArrayTypeStack = []
   }
 
-  function handleKeyValue(value: string | number) {
-    const fullPath = [...pathStack]
-    if (isInArray) {
-      fullPath.push(arrayIndex++)
-    } else {
-      fullPath.push(activeKey as string | number)
+  /**
+   * Gets the default value for a given Zod type.
+   *
+   * @param type - The Zod type.
+   * @returns The default value for the type.
+   */
+  private getDefaultValue(type: ZodTypeAny): unknown {
+    switch (type._def.typeName) {
+      case "ZodString":
+        return ""
+      case "ZodNumber":
+        return 0
+      case "ZodBoolean":
+        return false
+      case "ZodArray":
+        return []
+      case "ZodRecord":
+        return {}
+      case "ZodObject":
+        return this.createBlankObject(type as SchemaType)
+      case "ZodOptional":
+        //eslint-disable-next-line
+        return this.getDefaultValue((type as ZodOptional<any>).unwrap())
+      case "ZodNullable":
+        return null
+      default:
+        throw new Error(`Unsupported type: ${type._def.typeName}`)
+    }
+  }
+
+  private createBlankObject<T extends ZodRawShape>(schema: SchemaType<T>): NestedObject {
+    const obj: NestedObject = {}
+
+    for (const key in schema.shape) {
+      const type = schema.shape[key]
+      obj[key as string] = this.getDefaultValue(type)
     }
 
-    schemaInstance = setDeepValue(schemaInstance, fullPath, value)
+    return obj
   }
 
-  jsonparser.onToken = ({ token, value }) => {
-    try {
-      switch (token) {
-        case TokenType.STRING:
-          if (isKey) {
-            activeKey = value as string
+  /**
+   * Sets a deep value in a nested object.
+   *
+   * @param obj - The object to modify.
+   * @param path - The path to the value.
+   * @param value - The value to set.
+   * @returns The modified object.
+   */
+  private setDeepValue(
+    obj: NestedObject,
+    path: (string | number)[],
+    value: NestedValue
+  ): NestedObject {
+    if (!path.length) return obj
+
+    let current: NestedValue | NestedObject = obj
+    for (let i = 0; i < path.length - 1; i++) {
+      if (typeof path[i] === "number") {
+        if (!Array.isArray(current[path[i]])) {
+          ;(current as NestedObject)[path[i]] = []
+        }
+      } else {
+        if (typeof current[path[i]] !== "object" || current[path[i]] === null) {
+          ;(current as NestedObject)[path[i]] = {}
+        }
+      }
+
+      current = (current as NestedObject)[path[i]]
+    }
+
+    if (Array.isArray(current) && typeof path[path.length - 1] === "number") {
+      ;(current as NestedValue[]).push(value)
+    } else {
+      ;(current as NestedObject)[path[path.length - 1]] = value
+    }
+
+    return obj
+  }
+
+  private addToPath(value: string | number): void {
+    this.pathStack.push(value)
+  }
+
+  private removeFromPath(): string | number | undefined {
+    return this.pathStack.pop()
+  }
+
+  private isCurrentTypeObject(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
+    return currentSchemaType instanceof z.ZodObject
+  }
+
+  private isCurrentTypeArray(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
+    return currentSchemaType instanceof z.ZodArray
+  }
+
+  private isCurrentArrayTypeChildObject(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
+    return currentSchemaType.element instanceof z.ZodObject
+  }
+
+  private isExpectedArrayObject(): boolean {
+    return this.expectedArrayTypeStack[this.expectedArrayTypeStack.length - 1] === "object"
+  }
+
+  private getCurrentObjectPath(): (string | number)[] {
+    const currentObjectPath = [...this.pathStack]
+    if (this.isExpectedArrayObject()) {
+      currentObjectPath.push(this.arrayIndex)
+    }
+    return currentObjectPath
+  }
+
+  private updateCurrentObject(value: string | number): void {
+    const currentObjectPath = this.getCurrentObjectPath()
+    const currentObject = pathOr({}, currentObjectPath, this.schemaInstance)
+    currentObject[this.activeKey as string] = value
+    this.schemaInstance = this.setDeepValue(this.schemaInstance, currentObjectPath, currentObject)
+    this.activeKey = null
+  }
+
+  private handleKeyValue(value: string | number) {
+    const fullPath = [...this.pathStack]
+    if (this.isInArray) {
+      fullPath.push(this.arrayIndex++)
+    } else {
+      fullPath.push(this.activeKey as string | number)
+    }
+
+    if (this.isExpectedArrayObject()) {
+      this.updateCurrentObject(value)
+    } else {
+      this.schemaInstance = this.setDeepValue(this.schemaInstance, fullPath, value)
+    }
+
+    this.activeKey = null
+  }
+
+  private tokenHandlers = new Map([
+    [
+      TokenType.STRING,
+      (value: string | number) => {
+        if (this.isKey) {
+          this.activeKey = value as string
+        } else {
+          this.handleKeyValue(value as string | number)
+        }
+      }
+    ],
+    [
+      TokenType.NUMBER,
+      (value: string | number) => {
+        this.handleKeyValue(value as number)
+      }
+    ],
+    [
+      TokenType.LEFT_BRACKET,
+      () => {
+        if (this.isCurrentTypeObject()) {
+          this.expectedArrayTypeStack.push("object")
+        }
+
+        if (this.isCurrentTypeArray()) {
+          if (this.isCurrentArrayTypeChildObject()) {
+            this.expectedArrayTypeStack.push("object")
           } else {
-            handleKeyValue(value as string)
+            this.expectedArrayTypeStack.push("primitive")
           }
-          break
+        }
 
-        case TokenType.NUMBER:
-          handleKeyValue(value as number)
-          break
+        if (this.activeKey !== null) {
+          this.addToPath(this.activeKey)
+        }
 
-        case TokenType.LEFT_BRACE:
-          if (activeKey !== null) {
-            pathStack.push(activeKey)
-            activeKey = null
-          }
-          isKey = true
-          break
+        this.isInArray = true
+        this.arrayIndex = 0
+      }
+    ],
+    [
+      TokenType.LEFT_BRACE,
+      () => {
+        if (this.activeKey !== null && !this.isInArray) {
+          this.addToPath(this.activeKey)
+        }
 
-        case TokenType.LEFT_BRACKET:
-          if (activeKey !== null) {
-            pathStack.push(activeKey)
-            activeKey = null
-          }
-          isInArray = true
-          arrayIndex = 0
-          break
+        this.isKey = true
+      }
+    ],
+    [
+      TokenType.RIGHT_BRACE,
+      () => {
+        if (this.pathStack.length > 0 && !this.isInArray) {
+          this.activeKey = this.removeFromPath() as string | number
+        }
+      }
+    ],
+    [
+      TokenType.RIGHT_BRACKET,
+      () => {
+        this.expectedArrayTypeStack.pop()
 
-        case TokenType.RIGHT_BRACE:
-        case TokenType.RIGHT_BRACKET:
-          if (pathStack.length > 0) {
-            activeKey = pathStack.pop() as string | number
-          }
-          if (token === TokenType.RIGHT_BRACKET) {
-            isInArray = false
-            arrayIndex = 0
-          }
-          break
+        this.isInArray = false
+        this.arrayIndex = 0
 
-        case TokenType.COLON:
-          isKey = false
-          break
+        if (this.pathStack.length > 0) {
+          this.activeKey = this.removeFromPath() as string | number
+        }
+      }
+    ],
+    [
+      TokenType.COLON,
+      () => {
+        this.isKey = false
+      }
+    ],
+    [
+      TokenType.COMMA,
+      () => {
+        this.activeKey = null
+        this.isKey = !this.isInArray
+      }
+    ]
+  ])
 
-        case TokenType.COMMA:
-          activeKey = null
-          isKey = !isInArray
-          break
+  private handleToken({ token, value }) {
+    try {
+      const handler = this.tokenHandlers.get(token)
+      if (handler) {
+        handler(value)
+      } else {
+        console.error(`Unhandled token type: ${token}`)
       }
     } catch (e) {
       console.error(`Error in the json parser onToken handler: token ${token} value ${value}`, e)
     }
   }
 
-  const stream = new TransformStream({
-    async transform(chunk, controller): Promise<void> {
-      try {
-        jsonparser.write(chunk)
-        controller.enqueue(textEncoder.encode(JSON.stringify(schemaInstance)))
-      } catch (e) {
-        console.error(`Error in the json parser transform stream: parsing chunk`, e)
-      }
-    },
-    flush(_controller) {
-      jsonparser.end()
-    }
-  })
+  /**
+   * Parses the JSON stream.
+   *
+   * @returns A `TransformStream` that can be used to process the JSON data.
+   */
+  public parse() {
+    const textEncoder = new TextEncoder()
+    const jsonparser = new JSONParser()
 
-  return stream
+    jsonparser.onValue = ({}) => {
+      //eslint-disable-next-line
+    }
+
+    jsonparser.onToken = this.handleToken.bind(this)
+
+    const stream = new TransformStream({
+      transform: async (chunk, controller): Promise<void> => {
+        try {
+          jsonparser.write(chunk)
+          console.log(this.schemaInstance)
+          controller.enqueue(textEncoder.encode(JSON.stringify(this.schemaInstance)))
+        } catch (e) {
+          console.error(`Error in the json parser transform stream: parsing chunk`, e)
+        }
+      },
+      flush(_controller) {
+        jsonparser.end()
+      }
+    })
+
+    return stream
+  }
 }

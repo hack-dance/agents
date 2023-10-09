@@ -105,8 +105,9 @@ export function useJsonStream({
         console.error(`error calling stream url ${url}: ${response.statusText}`)
         throw new Error(response.statusText)
       }
+      const streamParser = new JsonStreamParser(schema)
+      const parser = streamParser.parse()
 
-      const parser = JsonStreamParser(schema)
       response.body?.pipeThrough(parser)
 
       let done = false
@@ -136,6 +137,7 @@ export function useJsonStream({
         }
 
         const chunkValue = decoder.decode(value)
+        console.log(chunkValue)
         result = JSON.parse(chunkValue)
 
         onReceive && onReceive(result)
