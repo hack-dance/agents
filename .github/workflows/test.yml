@@ -4,7 +4,7 @@ on: [push]
 jobs:
 
   test:
-    name: my-job
+    name: run-tests
     runs-on: ubuntu-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}

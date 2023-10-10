@@ -190,6 +190,7 @@ export class JsonStreamParser {
     const currentObjectPath = this.getCurrentObjectPath()
     const currentObject = pathOr({}, currentObjectPath, this.schemaInstance)
     currentObject[this.activeKey as string] = value
+
     this.schemaInstance = this.setDeepValue(this.schemaInstance, currentObjectPath, currentObject)
     this.activeKey = null
   }
@@ -329,7 +330,7 @@ export class JsonStreamParser {
       transform: async (chunk, controller): Promise<void> => {
         try {
           jsonparser.write(chunk)
-          console.log(this.schemaInstance)
+
           controller.enqueue(textEncoder.encode(JSON.stringify(this.schemaInstance)))
         } catch (e) {
           console.error(`Error in the json parser transform stream: parsing chunk`, e)
