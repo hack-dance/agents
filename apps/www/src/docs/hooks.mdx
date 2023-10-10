@@ -1,4 +1,4 @@
-# @hack-dance/hooks
+# @hackdance/hooks
 
 This package provides custom React hooks for managing streams, chat streams, and JSON streams.
 
@@ -7,7 +7,7 @@ This package provides custom React hooks for managing streams, chat streams, and
 To install the package, run the following command:
 
 ```bash
-  pnpm add @hack-dance/hooks
+  pnpm add @hackdance/hooks
 ```
 
 ## Hooks
@@ -26,7 +26,7 @@ To install the package, run the following command:
 #### Usage
 
 ```jsx
-  import { useStream } from '@hack-dance/hooks';
+  import { useStream } from '@hackdance/hooks';
 
   const { startStream, stopStream } = useStream({ onBeforeStart: ..., onStop: ... });
 ```
@@ -48,7 +48,7 @@ To install the package, run the following command:
 #### Usage
 
 ```jsx
-  import { useChatStream } from '@hack-dance/hooks'
+  import { useChatStream } from '@hackdance/hooks'
 
   const { loading, startStream, stopStream, messages, setMessages } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: [] })
 ```
@@ -68,7 +68,7 @@ To install the package, run the following command:
 #### Usage
 
   ```jsx
-  import { useJsonStream } from '@hack-dance/hooks';
+  import { useJsonStream } from '@hackdance/hooks';
 
   const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
   ```
