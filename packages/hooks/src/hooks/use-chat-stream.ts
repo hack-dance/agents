@@ -131,6 +131,7 @@ export function useChatStream({
         body: {
           prompt,
           ctx: {
+            messages: messagesRef.current,
             ...ctx,
             ...completionCtx
           }
