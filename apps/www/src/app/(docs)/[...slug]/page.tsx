@@ -1,3 +1,4 @@
+// apps/www/src/app/docs/[...slug]/page.tsx
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -5,16 +6,19 @@ import { Loader2 } from "lucide-react"
 
 import { docs } from "@/config/docs"
 
-const allDocs = docs.flat()
+const allDocs = Object.values(docs)
+const allPages = allDocs.flatMap(pkg => pkg.sections.flatMap(section => section.pages))
 
 export async function generateStaticParams() {
-  return allDocs.map(doc => ({
-    slug: doc.slug.split("/")
+  return allPages.map(page => ({
+    params: {
+      slug: page.slug.split("/")
+    }
   }))
 }
 
 export default async function Page({ params: { slug } }) {
-  const doc = allDocs.find(doc => doc.slug === slug.join("/"))
+  const doc = allPages.find(doc => doc.slug === slug.join("/"))
 
   if (!doc) {
     return notFound()

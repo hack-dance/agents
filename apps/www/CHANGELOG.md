@@ -1,4 +1,4 @@
-# hack-dance-agents
+# hack-dance-docs
 
 ## 0.1.5
 

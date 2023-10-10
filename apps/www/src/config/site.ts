@@ -19,13 +19,13 @@ export const siteConfig = {
     }
   },
   mainNav: [
-    {
-      label: "Documentation",
-      url: "/docs/getting-started"
-    },
-    {
-      label: "Examples",
-      url: "/examples"
-    }
+    // {
+    //   label: "packages",
+    //   url: "/"
+    // },
+    // {
+    //   label: "templates",
+    //   url: "/"
+    // }
   ]
 }

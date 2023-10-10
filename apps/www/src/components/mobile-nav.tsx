@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { PanelLeftOpen } from "lucide-react"
 
-import { DocNav } from "@/components/doc-nav"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
@@ -31,9 +30,7 @@ export function MobileNav() {
           </Link>
         </h3>
 
-        <div className="mt-4 pl-4">
-          <DocNav />
-        </div>
+        <div className="mt-4 pl-4">{/* <DocNav /> */}</div>
         <h3 className="mt-6 px-2 text-xs text-muted-foreground font-bold">
           <Link className="hover:underline" href={"/docs/getting-started"}>
             EXAMPLES
