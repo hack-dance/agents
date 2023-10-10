@@ -1,60 +1,19 @@
-# @hack-dance/agents
-> Copy, Paste, AI: A modular toolkit for building more then just chat bots.
+#hack-dance oss
+> A collection of utilities to make working with streams and open ai simpler.
 
 [docs](https://agents.hack.dance)
-[cli on npm](https://www.npmjs.com/package/@hackdance/agents-cli)
 
-:information_source: **FYI**: These docs are a work in progress. For now, all code is in TypeScript and examples assume Next.js 13+. Feel free to reach out on Twitter or create an issue on GitHub if something is unclear or broken. More examples and framework integrations are coming soon. Thanks for your patience!
-
-## Table of Contents
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Chat Agent](#chat-agent)
-- [Schema Agent](#schema-agent)
-- [Streaming](#streaming)
-
-## Introduction
-A collection of AI utilities, hooks, and abstractions for building AI agents with OpenAI.
-
-# Installation
-
-Install the necessary dependencies with your package manager of choice.
-```zsh
-  pnpm add openai zod
-```
-
-## Standard install
-Add the core agents package to your project
-
-```zsh
-  pnpm add @hackdance/agents-core
-```
-
-Add the hooks package to your project
-
-```zsh
-  pnpm add @hackdance/agents-hooks
-```
+[agents](https://github.com/hack-dance/agents/packages/core)
+[hooks](https://github.com/hack-dance/agents/packages/hooks)
+[schema-stream](https://github.com/hack-dance/agents/packages/schemaStream)
 
 
+## Agents
 
-## Copy & paste w/ cli
-Add the core agent utilities and/or hooks using interactive CLI
 
-```zsh
-  npx @hackdance/agents-cli add --path=src
-```
+## Hooks
 
-Optionally setup import aliases
 
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
-}
-```
+## SchemaStream
 
 
