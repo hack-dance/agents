@@ -30,7 +30,9 @@ someNumber: z.number()
 const response = await getSomeStreamOfJson()
 
 const parser = new SchemaStream(schema)
-const streamParser = parser.parse()
+const streamParser = parser.parse({
+  enableStringStreaming: true
+})
 
 response.body?.pipeThrough(parser)
 
@@ -58,21 +60,25 @@ while (!done) {
 ### `constructor(schema: SchemaType)`
 The constructor takes a Zod schema as an argument for validation. The top level of the schema must be an object.
 
-### `parse(): TransformStream`
 
-The `parse` method returns a `TransformStream` that can be used to process the JSON data.
+### `parse(options: ParseOptions): TransformStream`
 
-## Description
+The `parse` method returns a `TransformStream` that can be used to process the JSON data. It accepts an options object as an argument.
 
-`schema-stream` works by creating a blank object based on the provided schema and then filling in the values as they are parsed from the stream.
+| Argument | Type | Description | Default |
+| --- | --- | --- | --- |
+| `options` | `Object` | An options object for the parse method. | `{}` |
+| `options.enableStringStreaming` | `boolean` | (currently only works with string fields set on the root.) If set to true, the parser will stream string values. This is useful when dealing with large strings that might otherwise cause the parser to run out of memory, or you want to return to the user asap. | `false` |
 
-The utility also handles nested arrays and objects.
 
 ## Error Handling
-`schema-stream` includes error handling for unsupported Zod types and unhandled token types. It also logs errors that occur in the JSON parser's onToken handler and the transform stream.
+`schema-stream` includes error handling for unsupported Zod types and unhandled token types.
+It also logs errors that occur in the JSON parser's onToken handler and the transform stream.
+
+--more to come--
 
 
 ## Note
-This utility is designed to be used with streams of JSON data. It may not work correctly with other types of data.
+This utility is designed to be used with streams of JSON data.
 
-Please note that when expecting arrays or any type, the array values will not be stubbed since we don't know the length of those arrays beforehand - so the default values there will just be empty.
+Please note that when expecting arrays of any type, the array values will not be stubbed since we don't know the length of those arrays beforehand - so the default will jsut be an empty list.

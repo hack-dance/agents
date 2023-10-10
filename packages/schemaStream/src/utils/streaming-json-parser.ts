@@ -214,6 +214,11 @@ export class SchemaStream {
     return currentSchemaType instanceof z.ZodObject
   }
 
+  private isCurrentTypeString(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
+    return currentSchemaType instanceof z.ZodString
+  }
+
   private isCurrentTypeArray(): boolean {
     const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
     return currentSchemaType instanceof z.ZodArray
@@ -223,6 +228,13 @@ export class SchemaStream {
     const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
     return (
       currentSchemaType instanceof z.ZodArray && currentSchemaType.element instanceof z.ZodObject
+    )
+  }
+
+  private isCurrentArrayTypeChildString(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
+    return (
+      currentSchemaType instanceof z.ZodArray && currentSchemaType.element instanceof z.ZodString
     )
   }
 
@@ -388,6 +400,30 @@ export class SchemaStream {
     }
   }
 
+  private handleStreamingPartialValues(chunk) {
+    if (this.activeKey && !this.isKey && this.isCurrentTypeString()) {
+      const decoder = new TextDecoder()
+
+      try {
+        let decoded = decoder.decode(chunk)
+
+        if (decoded.startsWith('"') && !decoded.startsWith('\\"')) {
+          decoded = decoded.slice(1)
+        }
+        if (decoded.endsWith('"') && !decoded.endsWith('\\"')) {
+          decoded = decoded.slice(0, -1)
+        }
+
+        let currentValue = pathOr("", [this.activeKey], this.schemaInstance)
+        currentValue = currentValue += decoded
+
+        this.schemaInstance = this.setDeepValue(this.schemaInstance, [this.activeKey], currentValue)
+      } catch (e) {
+        console.warn("schema-stream: error attempting to set streaming string value", e)
+      }
+    }
+  }
+
   public getSchemaStub<T extends ZodRawShape>(schema: SchemaType<T>): z.infer<typeof schema> {
     return this.createBlankObject(schema) as z.infer<typeof schema>
   }
@@ -395,9 +431,12 @@ export class SchemaStream {
   /**
    * Parses the JSON stream.
    *
+   * @param {Object} opts - The options for parsing the JSON stream.
+   * @param {boolean} [opts.enableStringStreaming=true] - Whether to enable streaming of partial strings. If this is true, chunks of a string value will be added to the stubbed version of the data as soon as they are parsed.
    * @returns A `TransformStream` that can be used to process the JSON data.
    */
-  public parse() {
+  public parse(opts: { enableStringStreaming?: boolean } = { enableStringStreaming: true }) {
+    const { enableStringStreaming = true } = opts
     const textEncoder = new TextEncoder()
     const jsonparser = new JSONParser()
 
@@ -411,6 +450,10 @@ export class SchemaStream {
       transform: async (chunk, controller): Promise<void> => {
         try {
           jsonparser.write(chunk)
+
+          if (enableStringStreaming) {
+            this.handleStreamingPartialValues(chunk)
+          }
 
           controller.enqueue(textEncoder.encode(JSON.stringify(this.schemaInstance)))
         } catch (e) {
