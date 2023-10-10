@@ -4,7 +4,7 @@ export const runtime = "edge"
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const { prompt } = await request.json()
+    const { prompt = "" } = await request.json()
 
     const stream = await exampleAgent.completionStream({
       prompt

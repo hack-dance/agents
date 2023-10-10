@@ -3,19 +3,20 @@
 import { useState } from "react"
 import { useJsonStream } from "@hackdance/agents-hooks"
 
-import { PromptComposer } from "@/components/prompt-composer"
 import { schema } from "@/ai/agents/schema"
+
+import { Button } from "./ui/button"
 
 export function Chat() {
   const [prompt, setPrompt] = useState("")
   const [loading, setIsLoading] = useState(false)
 
-  const { startStream, json } = useJsonStream({
+  const { startStream, stopStream, json } = useJsonStream({
     schema: schema
   })
 
   const sendMessage = async () => {
-    if (!prompt.length || loading) return
+    if (loading) return
 
     setIsLoading(true)
     setPrompt("")
@@ -32,32 +33,23 @@ export function Chat() {
     }
   }
 
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setPrompt(event.target.value ?? "")
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (event.key === "Enter") {
-      event.preventDefault() // Prevent the default newline behavior of the Enter key
-      sendMessage()
-    }
-  }
-
   return (
     <div className="flex flex-col max-h-full">
-      <div className="max-h-full overflow-y-auto flex-1 px-12 py-8">
+      <pre className="max-h-full overflow-y-auto flex-1 px-12 py-8">
         {`
-          json: ${JSON.stringify(json, null, 2)}
+          ${JSON.stringify(json, null, 2)}
         `}
-      </div>
+      </pre>
 
-      <PromptComposer
-        loading={loading}
-        onChange={handleInput}
-        onKeyDown={handleKeyDown}
-        onSubmit={sendMessage}
-        prompt={prompt}
-      />
+      <div className="gap-4 flex justify-center">
+        <Button onClick={sendMessage} disabled={loading}>
+          Start stream
+        </Button>
+
+        <Button onClick={stopStream} disabled={loading}>
+          Stop stream
+        </Button>
+      </div>
     </div>
   )
 }

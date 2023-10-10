@@ -1,192 +1,79 @@
-# @hackdance/agents-hooks
-A collection of react hooks for building AI powered UI's.
+# @hack-dance/hooks
 
-These hooks are meant to be used with the [@hackdance/agents-core](https://agents.hack.dance) package.
+This package provides three custom React hooks for managing streams, chat streams, and JSON streams.
 
+## Installation
 
-## Getting Started
+To install the package, run the following command:
+
 ```bash
-pnpm add @hackdance/agents-hooks
+  pnpm add @hack-dance/hooks
+```
+
+## Hooks
+
+### useStream
+
+`useStream` is a custom React hook that manages a stream. It provides functionalities to start and stop the stream.
+
+#### Props
+
+| Name          | Type     | Description |
+| ------------- | -------- | ----------- |
+| onBeforeStart | function | Optional callback function that will be invoked before the stream starts. |
+| onStop        | function | Optional callback function that will be invoked when the stream stops. |
+
+#### Usage
+
+```jsx
+  import { useStream } from '@hack-dance/hooks';
+
+  const { startStream, stopStream } = useStream({ onBeforeStart: ..., onStop: ... });
 ```
 
 
-## use-json-stream
-Hook for receiving safe to parse json from an agent stream.
+### useChatStream
 
-**Usage**
-```tsx
-"use client"
+`useChatStream` is a custom React hook that extends the `useStream` hook to manage a chat stream. It provides functionalities to start and stop the chat stream, manage the chat messages, and manage the loading state.
 
-import { useState } from "react"
+#### Props
 
-import { useJsonStream } from "@/hooks/use-json-stream"
-import { PromptComposer } from "@/components/prompt-composer"
-import { jokeCriticScema } from "@/ai/agents/joke-critic-agent"
+| Name             | Type     | Description |
+| ---------------- | -------- | ----------- |
+| onReceive        | function | Optional callback function that will be invoked when a message is received. |
+| onEnd            | function | Optional callback function that will be invoked when the chat stream ends. |
+| startingMessages | array    | Optional array of starting messages. |
+| ctx              | object   | Optional context object. |
 
-export default function JokeCritic() {
-  const [prompt, setPrompt] = useState("")
-  const [response, setResponse] = useState({})
+#### Usage
 
-  const { startStream, stopStream, loading } = useJsonStream({
-    onReceive: data => {
-      setResponse(data)
-    },
-    onEnd: async ({ content }) => {
-      setResponse(content)
-    },
-    schema: jokeCriticScema
-  })
+```jsx
+  import { useChatStream } from '@hack-dance/hooks'
 
-  const sendMessage = async () => {
-    if (!prompt.length || loading) return
-
-    try {
-      startStream({
-        prompt,
-        url: "/api/ai/joke-critic",
-        ctx: {}
-      })
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setPrompt(event.target.value ?? "")
-  }
-
-  return (
-    <div className="h-full flex flex-col justify-between py-4 overflow-hidden">
-      <div className="p-8">
-        <h2>Your joke score</h2>
-
-        <strong>Critique</strong>
-        <p>{response?.critique}</p>
-
-        <strong>Funny Factor</strong>
-        <p>{response?.funnyFactor}</p>
-
-        <strong>Novelty</strong>
-        <p>{response?.novelty}</p>
-
-        <strong>Overall Score</strong>
-        <p>{response?.overallScore}</p>
-      </div>
-
-      <div className="p-8">
-        <PromptComposer
-          placeholder="Tell me a joke..."
-          loading={loading}
-          onChange={handleInput}
-          onSubmit={sendMessage}
-          prompt={prompt}
-        />
-      </div>
-    </div>
-  )
-}
+  const { loading, startStream, stopStream, messages, setMessages } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: [] })
 ```
 
 
+### useJsonStream
+
+`useJsonStream` is a custom React hook that extends the `useStream` hook to add JSON parsing functionality. It uses the `SchemaStream` to parse the incoming stream into JSON.
+
+#### Props
+
+| Name      | Type     | Description |
+| --------- | -------- | ----------- |
+| onReceive | function | Optional callback function that will be invoked when a JSON object is received. |
+| schema    | z.ZodObject   | The zod schema for the JSON data, the top level must be an object. |
+
+#### Usage
+
+  ```jsx
+  import { useJsonStream } from '@hack-dance/hooks';
+
+  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
+  ```
 
 
-## Utils
+## License
 
-**Streaming JSON parser**
-utility for parsing json streams as it becomes available.
-
-```tsx
- const functionParamaterSchema = z.object({
-   name: z.string(),
-   age: z.number()
- });
-
-
-const functionStream = await fetch("https://api.openai.com/completion", {
-  ...options,
-  body: JSON.stringify({
-    ...openAiConfig,
-    functions: [{
-      name: "My Function",
-      description: "A function that returns a person's name and age.",
-      paramaters: zodToJson(functionParamaterSchema)
-    }]
-  })
-})
-
-const argumentsStream = OAIResponseFnArgsParser(stream)
-const parser = JsonStreamParser(schema);
-argumentsStream?.pipeThrough(parser)
-```
-
-## use-chat-stream
-A hook for managing a conversation with an ai agent.
-
-**Usage**
-```ts
-"use client"
-
-import { useState } from "react"
-
-import { useChatStream } from "@/hooks/use-chat-stream"
-import { MessageList } from "@/components/message-list"
-import { PromptComposer } from "@/components/prompt-composer"
-
-export default function Chat({ conversation, updateConversation }) {
-  const [prompt, setPrompt] = useState("")
-  const ChatScrollerRef = useRef<HTMLDivElement>(null)
-
-  const scrollToEnd = ({ now = false }: { now?: boolean }) => {
-    ChatScrollerRef?.current?.scrollTo({
-      top: ChatScrollerRef?.current?.scrollHeight,
-      behavior: now ? "auto" : "smooth"
-    })
-  }
-
-  const { startStream, messages, loading } = useChatStream({
-    startingMessages: conversation?.messages,
-    onBeforeStart: async () => {
-      scrollToEnd({})
-      setPrompt("")
-    },
-    onEnd: ({ messagePair, messages: latestMessages }) => {
-      updateConversation({ newMessages: messagePair })
-    }
-  })
-
-  const sendMessage = async () => {
-    if (!prompt.length || loading) return
-
-    try {
-      startStream({
-        prompt,
-        url: "/api/ai/chat",
-        ctx: {}
-      })
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setPrompt(event.target.value ?? "")
-  }
-
-  return (
-    <div className="h-full flex flex-col justify-between py-4 overflow-hidden">
-      <div className=" overflow-y-auto p-8" ref={ChatScrollerRef}>
-        <MessageList messages={messages} />
-      </div>
-
-      <div className="p-8">
-        <PromptComposer
-          loading={loading}
-          onChange={handleInput}
-          onSubmit={sendMessage}
-          prompt={prompt}
-        />
-      </div>
-    </div>
-  )
-}
-```
+MIT

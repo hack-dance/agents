@@ -1,26 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import OpenAI from "openai"
+import { useCallback, useRef, useState } from "react"
 
-export type Messages = OpenAI.Chat.ChatCompletionMessageParam[]
+import { UseStreamProps, useStream } from "./use-stream"
 
-export type OnEndArgs = {
-  createdAt: string
+type Messages = {
+  role: string
+  content: string
+}[]
+
+type OnEndArgs = {
   content?: string
   messagePair?: Messages
   messages?: Messages
 }
 
-export interface StartStreamArgs {
+interface StartStreamArgs {
   url: string
   prompt: string
   ctx?: object
 }
 
-export interface StartStream {
+interface StartStream {
   (args: StartStreamArgs): void
 }
 
-export interface StopStream {
+interface StopStream {
   (): void
 }
 
@@ -32,8 +35,7 @@ export interface UseChatStreamPayload {
   setMessages: (messages: Messages) => void
 }
 
-export interface UseChatStreamProps {
-  onBeforeStart?: () => void
+export interface UseChatStreamProps extends UseStreamProps {
   onReceive?: (value: string) => void
   onEnd?: (args: OnEndArgs) => void
   startingMessages?: Messages
@@ -41,25 +43,50 @@ export interface UseChatStreamProps {
 }
 
 /**
- * @param {UseChatStreamProps} props
+ * `useChatStream` is a custom React hook that extends the `useStream` hook to manage a chat stream.
+ * It provides functionalities to start and stop the chat stream, manage the chat messages, and manage the loading state.
  *
- * @returns {UseChatStreamPayload}
+ * @param {UseChatStreamProps} props - The props for the hook include optional callback
+ * functions that will be invoked at different stages of the chat stream lifecycle, and a list of starting messages.
  *
+ * @returns {UseChatStreamPayload} - An object that includes the loading state, start and stop stream functions,
+ * current messages, and a function to set messages.
+ *
+ * @example
+ * ```
+ * const {
+ *   loading,
+ *   startStream,
+ *   stopStream,
+ *   messages,
+ *   setMessages
+ * } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: ... });
+ * ```
  */
 export function useChatStream({
-  onBeforeStart,
   onReceive,
   onEnd,
   startingMessages = [],
-  ctx = {}
+  ctx = {},
+  ...streamProps
 }: UseChatStreamProps): UseChatStreamPayload {
   const [manualRenders, setManualRenders] = useState(0)
   const [loading, setLoading] = useState(false)
   const [_currentStream, setCurrentStream] = useState("")
 
-  const abortControllerRef = useRef<AbortController | null>(null)
   const messagesRef = useRef<Messages>(startingMessages)
 
+  /**
+   * @function setMessages
+   * Replaces the current chat messages.
+   *
+   * @param {Messages} messages - The new chat messages.
+   *
+   * @example
+   * ```
+   * setMessages([{ role: 'user', content: 'Hello, world!' }]);
+   * ```
+   */
   const setMessages = useCallback((messages: Messages) => {
     messagesRef.current = messages
   }, [])
@@ -67,13 +94,27 @@ export function useChatStream({
   const manualSetMessages = useCallback(
     (messages: Messages) => {
       messagesRef.current = messages
-
       setManualRenders(manualRenders + 1)
     },
     [manualRenders]
   )
 
-  const startStream = async ({ url, prompt, ctx: completionCtx = {} }) => {
+  const { startStream: startStreamBase, stopStream } = useStream({
+    ...streamProps
+  })
+
+  /**
+   * @function startStream
+   * Starts a chat stream with the provided arguments.
+   *
+   * @param {StartStreamArgs} args - The arguments for starting the chat stream, including the URL, prompt, and optional context.
+   *
+   * @example
+   * ```
+   * startStream({ url: 'http://example.com', prompt: 'Hello, world!', ctx: { key: 'value' } });
+   * ```
+   */
+  const startStream = async ({ url, prompt, ctx: completionCtx = {} }: StartStreamArgs) => {
     try {
       const userMessage = {
         content: prompt,
@@ -82,29 +123,19 @@ export function useChatStream({
 
       const newMessages = [...messagesRef?.current, userMessage] as Messages
 
-      const abortController = new AbortController()
-      abortControllerRef.current = abortController
-
       setLoading(true)
       setMessages(newMessages)
-      onBeforeStart && onBeforeStart()
 
-      const response = await fetch(`${url}`, {
-        method: "POST",
-        signal: abortController.signal,
-        body: JSON.stringify({
+      const response = await startStreamBase({
+        url,
+        body: {
           prompt,
           ctx: {
             ...ctx,
             ...completionCtx
           }
-        })
+        }
       })
-
-      if (!response.ok) {
-        console.error(`error calling stream url ${url}: ${response.statusText}`)
-        throw new Error(response.statusText)
-      }
 
       let done = false
       const data = response.body
@@ -117,42 +148,21 @@ export function useChatStream({
 
       let result = ""
       const decoder = new TextDecoder()
-      const createdAt = new Date().toISOString()
 
       while (!done) {
         const { value, done: doneReading } = await reader.read()
         done = doneReading
-
-        if (done) {
-          onEnd &&
-            onEnd({
-              createdAt,
-              content: result,
-              messages: messagesRef.current,
-              messagePair: [
-                userMessage,
-                {
-                  role: "assistant",
-                  content: result
-                }
-              ] as Messages
-            })
-
-          setLoading(false)
-          break
-        }
 
         const chunkValue = decoder.decode(value)
         result += chunkValue
 
         onReceive && onReceive(chunkValue)
         setMessages([...newMessages, { role: "assistant", content: result }])
-
         setCurrentStream(result)
+
         if (done) {
           onEnd &&
             onEnd({
-              createdAt,
               content: result,
               messages: messagesRef.current,
               messagePair: [
@@ -165,22 +175,12 @@ export function useChatStream({
             })
 
           setLoading(false)
-
-          break
-        }
-
-        if (abortControllerRef.current === null) {
-          reader.cancel()
-          setLoading(false)
           break
         }
       }
-
-      abortControllerRef.current = null
     } catch (err) {
       if (err?.name === "AbortError") {
         console.log("aborted", err)
-        abortControllerRef.current = null
         return null
       }
       console.error(`error in chat stream hook`, err)
@@ -189,20 +189,6 @@ export function useChatStream({
       setLoading(false)
     }
   }
-
-  const stopStream = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef?.current?.abort()
-      abortControllerRef.current = null
-    }
-    setLoading(false)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      stopStream()
-    }
-  }, [stopStream])
 
   return {
     loading,

@@ -1,9 +1,9 @@
 {
-  "name": "@hackdance/hooks",
+  "name": "schema-stream",
   "version": "0.0.0",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://agents.hack.dance)",
   "repository": {
-    "directory": "packages/hooks",
+    "directory": "packages/schemaStream",
     "type": "git",
     "url": "https://github.com/hack-dance/agents.git"
   },
@@ -19,6 +19,7 @@
     "dist/**"
   ],
   "scripts": {
+    "test": "bun test --coverage --verbose",
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "TIMING=1 eslint src/**/*.ts* --fix",
@@ -30,9 +31,10 @@
     "zod": "^3.21.4"
   },
   "peerDependencies": {
-    "schema-stream": "workspace:*",
-    "react": ">=18.2.0",
     "zod": ">=3.21.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@streamparser/json": "^0.0.15",
+    "ramda": "^0.29.0"
+  }
 }

@@ -9,7 +9,7 @@ const primaryIdentity = `
 export const exampleAgent = createSchemaAgent({
   config: {
     model: "gpt-4",
-    max_tokens: 500,
+    max_tokens: 2000,
     temperature: 0.3
   },
   identityMessages: [

@@ -1,10 +1,53 @@
 import { JSONParser, TokenType } from "@streamparser/json"
-import { pathOr } from "ramda"
 import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
 type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
+
 type NestedValue = string | number | boolean | NestedObject | NestedValue[]
 type NestedObject = { [key: string]: NestedValue } | { [key: number]: NestedValue }
+
+type Path = Array<string | number | null>
+
+/**
+ * Retrieves the value at a given path within a nested object or array. If the path does not exist, it returns a default value.
+ *
+ * @template T - The type of the default value and the expected return type.
+ * @param {T} defaultValue - The default value to return if the path does not exist in the object.
+ * @param {Array<string | number>} path - An array representing the path to retrieve the value from. Each element can be a string (for object properties) or a number (for array indices).
+ * @param {Record<string | number, U>} object - The nested object or array to retrieve the value from.
+ * @returns {T | U} - The value at the given path within the object, or the default value if the path does not exist.
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: { b: { c: 42 } } };
+ * const path = ['a', 'b', 'c'];
+ * const defaultValue = 0;
+ * console.log(pathOr(defaultValue, path, obj)); // Outputs: 42
+ * ```
+ *
+ * @example
+ * ```typescript
+ * const obj = { a: { b: { c: 42 } } };
+ * const path = ['a', 'b', 'd'];
+ * const defaultValue = 0;
+ * console.log(pathOr(defaultValue, path, obj)); // Outputs: 0
+ * ```
+ */
+function pathOr<T, U>(defaultValue: T, path: Path, object: Record<string | number, U>): T | U {
+  let current: U | Record<string | number, U> = object
+
+  for (let i = 0; i < path.length; i++) {
+    const key = path[i]
+
+    if (key === null || key === undefined || current[key as string | number] == null) {
+      return defaultValue
+    }
+
+    current = (current as Record<string | number, U>)[key as string | number]
+  }
+
+  return current as U
+}
 
 /**
  * `JsonStreamParser` is a utility class for parsing streams of json and
@@ -47,7 +90,8 @@ type NestedObject = { [key: string]: NestedValue } | { [key: number]: NestedValu
  *
  * @public
  */
-export class JsonStreamParser {
+
+export class SchemaStream {
   private pathStack: (string | number)[]
   private activeKey: string | number | null
   private isKey: boolean
@@ -165,11 +209,6 @@ export class JsonStreamParser {
     return this.pathStack.pop()
   }
 
-  private isInsideObject(): boolean {
-    const currentSchemaType = pathOr(null, [...this.pathStack], this.schema.shape)
-    return currentSchemaType instanceof z.ZodObject
-  }
-
   private isCurrentTypeObject(): boolean {
     const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
     return currentSchemaType instanceof z.ZodObject
@@ -182,7 +221,9 @@ export class JsonStreamParser {
 
   private isCurrentArrayTypeChildObject(): boolean {
     const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
-    return currentSchemaType?.element instanceof z.ZodObject
+    return (
+      currentSchemaType instanceof z.ZodArray && currentSchemaType.element instanceof z.ZodObject
+    )
   }
 
   private isExpectedArrayObject(): boolean {
@@ -345,6 +386,10 @@ export class JsonStreamParser {
     } catch (e) {
       console.error(`Error in the json parser onToken handler: token ${token} value ${value}`, e)
     }
+  }
+
+  public getSchemaStub<T extends ZodRawShape>(schema: SchemaType<T>): z.infer<typeof schema> {
+    return this.createBlankObject(schema) as z.infer<typeof schema>
   }
 
   /**

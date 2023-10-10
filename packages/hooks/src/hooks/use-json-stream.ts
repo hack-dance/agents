@@ -1,13 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import OpenAI from "openai"
+import { useState } from "react"
+import { SchemaStream } from "schema-stream"
 import z from "zod"
 
-import { JsonStreamParser } from "@/utils/streaming-json-parser"
-
-type OnEndArgs = {
-  createdAt: number
-  content?: unknown | object
-}
+import { UseStreamProps, useStream } from "./use-stream"
 
 interface StartStreamArgs {
   url: string
@@ -23,28 +18,19 @@ interface StopStream {
   (): void
 }
 
-type Messages = OpenAI.Chat.ChatCompletionMessageParam[]
-
-export interface UseJsonStreamProps {
-  onBeforeStart?: () => void
+export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamProps {
   onReceive?: (value: object | unknown) => void
-  onEnd?: (args: OnEndArgs) => void
-  messages?: Messages
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: z.ZodObject<any>
+  schema: z.ZodObject<T>
 }
 
 /**
- * `useJsonStream` is a custom React hook that enables real-time chat functionalities.
- * It manages a chat stream, including starting a chat stream, stopping it, and handling
- * incoming chat messages. It also provides a loading state indicator.
+ * `useJsonStream` is a custom React hook that extends the `useStream` hook to add JSON parsing functionality.
+ * It uses the `SchemaStream` to parse the incoming stream into JSON.
  *
  * @param {UseJsonStreamProps} props - The props for the hook include optional callback
- * functions that will be invoked at different stages of the chat stream lifecycle,
- * and a list of starting messages.
+ * functions that will be invoked at different stages of the stream lifecycle, and a schema for the JSON data.
  *
- * @returns {UseJsonStreamPayload} - An object that includes the loading state, start and
- * stop stream functions, current messages, and a function to set messages.
+ * @returns {Object} - An object that includes the loading state, start and stop stream functions, and the parsed JSON data.
  *
  * @example
  * ```
@@ -52,145 +38,75 @@ export interface UseJsonStreamProps {
  *   loading,
  *   startStream,
  *   stopStream,
- *   messages,
- *   setMessages
- * } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: ... });
+ *   json
+ * } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
  * ```
  */
-export function useJsonStream({
-  onBeforeStart,
+export function useJsonStream<T extends z.ZodRawShape>({
   onReceive,
-  onEnd,
-  messages = [],
-  schema
-}: UseJsonStreamProps): {
-  loading: boolean
+  schema,
+  ...streamProps
+}: UseJsonStreamProps<T>): {
   startStream: StartStream
   stopStream: StopStream
   json: z.infer<typeof schema>
 } {
-  const [loading, setLoading] = useState(false)
-  const [_currentStream, setCurrentStream] = useState({})
+  const streamParser = new SchemaStream(schema)
+  const stubbedValue = streamParser.getSchemaStub(schema)
 
-  const abortControllerRef = useRef<AbortController | null>(null)
-  const jsonRef = useRef<object>({})
+  const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
+  const { startStream: startStreamBase, stopStream } = useStream(streamProps)
 
-  const startStream = async ({ url, prompt, ctx = {} }) => {
-    try {
-      const newMessages = [
-        ...messages,
-        {
-          content: prompt,
-          role: "user"
-        }
-      ] as Messages
+  /**
+   * @function startStream
+   * Starts a stream with the provided arguments and parses the incoming stream into JSON.
+   *
+   * @param {StartStreamArgs} args - The arguments for starting the stream, including the URL and optional body.
+   *
+   * @example
+   * ```
+   * startStream({ url: 'http://example.com', body: { key: 'value' } });
+   * ```
+   */
+  const startStream = async (args: StartStreamArgs) => {
+    const response = await startStreamBase(args)
 
-      const abortController = new AbortController()
-      abortControllerRef.current = abortController
-
-      setLoading(true)
-      onBeforeStart && onBeforeStart()
-
-      const response = await fetch(`${url}`, {
-        method: "POST",
-        signal: abortController.signal,
-        body: JSON.stringify({
-          prompt,
-          messages: newMessages,
-          ctx
-        })
-      })
-
-      if (!response.ok) {
-        console.error(`error calling stream url ${url}: ${response.statusText}`)
-        throw new Error(response.statusText)
-      }
-      const streamParser = new JsonStreamParser(schema)
+    if (response?.body) {
       const parser = streamParser.parse()
-
-      response.body?.pipeThrough(parser)
-
-      let done = false
-      const data = response.body
-
-      if (!data) {
-        return
-      }
+      response.body.pipeThrough(parser)
 
       const reader = parser.readable.getReader()
-
-      let result = {}
       const decoder = new TextDecoder()
-      const createdAt = new Date().valueOf()
 
+      let done = false
       while (!done) {
-        const { value, done: doneReading } = await reader.read()
-        done = doneReading
-        if (done) {
-          onEnd &&
-            onEnd({
-              createdAt,
-              content: result
-            })
-          setLoading(false)
-          break
-        }
+        try {
+          const { value, done: doneReading } = await reader.read()
+          done = doneReading
+          if (done) {
+            break
+          }
+          const chunkValue = decoder.decode(value)
+          const result = JSON.parse(chunkValue)
+          setJson(result)
+          onReceive && onReceive(result)
+        } catch (err) {
+          done = true
+          if (err?.name === "AbortError") {
+            console.log("useJsonStream: aborted", err)
+            return null
+          }
 
-        const chunkValue = decoder.decode(value)
-
-        result = JSON.parse(chunkValue)
-
-        onReceive && onReceive(result)
-        jsonRef.current = result
-        setCurrentStream(result)
-
-        done &&
-          onEnd &&
-          onEnd({
-            createdAt,
-            content: result
-          })
-        done && setLoading(false)
-
-        if (abortControllerRef.current === null) {
-          reader.cancel()
-          setLoading(false)
-          break
+          console.error(`useJsonStream: error`, err)
+          throw err
         }
       }
-
-      abortControllerRef.current = null
-    } catch (err) {
-      if (err?.name === "AbortError") {
-        console.log("aborted", err)
-        abortControllerRef.current = null
-        return null
-      }
-      console.error(`error in chat stream hook`, err)
-      throw err
-    } finally {
-      setLoading(false)
     }
   }
 
-  const stopStream = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef?.current?.abort()
-      abortControllerRef.current = null
-    }
-    setLoading(false)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      stopStream()
-    }
-  }, [stopStream])
-
   return {
-    loading,
     startStream,
     stopStream,
-    json: jsonRef.current
+    json
   }
 }
