@@ -6,7 +6,7 @@ export const docs = {
         title: "Getting started",
         pages: [
           {
-            title: "install",
+            title: "Install",
             slug: "hooks",
             id: "hooks"
           }
@@ -14,48 +14,15 @@ export const docs = {
       },
       {
         title: "useStream",
-        pages: [
-          {
-            title: "props",
-            slug: "hooks#useStream",
-            id: "hooks"
-          },
-          {
-            title: "usage",
-            slug: "hooks#useStream",
-            id: "hooks"
-          }
-        ]
+        pages: []
       },
       {
         title: "useJsonStream",
-        pages: [
-          {
-            title: "props",
-            slug: "hooks#useJsonStream",
-            id: "hooks"
-          },
-          {
-            title: "usage",
-            slug: "hooks#useJsonStream",
-            id: "hooks"
-          }
-        ]
+        pages: []
       },
       {
         title: "useChatStream",
-        pages: [
-          {
-            title: "props",
-            slug: "hooks#useChatStream",
-            id: "hooks"
-          },
-          {
-            title: "usage",
-            slug: "hooks#useChatStream",
-            id: "hooks"
-          }
-        ]
+        pages: []
       }
     ]
   },
