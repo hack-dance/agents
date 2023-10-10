@@ -28,7 +28,6 @@ export const docs = {
   },
   agents: {
     title: "agents",
-
     sections: [
       {
         title: "Getting started",

@@ -7,7 +7,14 @@ import { Loader2 } from "lucide-react"
 import { docs } from "@/config/docs"
 
 const allDocs = Object.values(docs)
-const allPages = allDocs.flatMap(pkg => pkg.sections.flatMap(section => section.pages))
+const allPages = allDocs.flatMap(pkg =>
+  pkg.sections.flatMap(section =>
+    section.pages.map(page => ({
+      ...page,
+      package: pkg.title
+    }))
+  )
+)
 
 export async function generateStaticParams() {
   return allPages.map(page => ({
@@ -39,7 +46,7 @@ export default async function Page({ params: { slug } }) {
     <div className="p-4 min-h-full">
       <header className="border-b-[1px] border-b-accent pb-4 mb-8">
         <span className="text-sm text-muted-foreground">
-          <Link href="/docs/getting-started">Documentation</Link>
+          <Link href={`/${doc.slug}`}>{doc.package}</Link>
         </span>
         {[...slug].slice(0, -1).map(part => {
           return (
@@ -49,7 +56,7 @@ export default async function Page({ params: { slug } }) {
                 key={part}
                 className="text-sm text-muted-foreground hover:underline cursor-pointer capitalize"
               >
-                <Link href={`/docs/${slug.slice(0, slug.indexOf(part) + 1).join("/")}`}>
+                <Link href={`/${slug.slice(0, slug.indexOf(part) + 1).join("/")}`}>
                   {part.replace(/-/g, " ")}
                 </Link>
               </span>
