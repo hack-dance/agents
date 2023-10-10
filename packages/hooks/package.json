@@ -19,6 +19,7 @@
     "dist/**"
   ],
   "scripts": {
+    "test": "bun test --coverage --verbose",
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "TIMING=1 eslint src/**/*.ts* --fix",

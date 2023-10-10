@@ -2,6 +2,9 @@
   "extends": "tsconfig/react.json",
   "compilerOptions": {
     "incremental": false,
+    "types": ["bun-types"],
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
     "plugins": [
       {
         "name": "next"

@@ -62,13 +62,13 @@ export class JsonStreamParser {
    * @param schema - The Zod schema to use for validation.
    */
   constructor(private schema: SchemaType) {
+    this.expectedArrayTypeStack = []
     this.pathStack = []
     this.activeKey = null
     this.isKey = false
     this.isInArray = false
     this.arrayIndex = 0
     this.schemaInstance = this.createBlankObject(schema)
-    this.expectedArrayTypeStack = []
   }
 
   /**
