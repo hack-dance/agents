@@ -3,7 +3,7 @@ import { pathOr } from "ramda"
 import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
 type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
-type NestedValue = string | number | NestedObject | NestedValue[]
+type NestedValue = string | number | boolean | NestedObject | NestedValue[]
 type NestedObject = { [key: string]: NestedValue } | { [key: number]: NestedValue }
 
 /**
@@ -129,23 +129,29 @@ export class JsonStreamParser {
 
     let current: NestedValue | NestedObject = obj
     for (let i = 0; i < path.length - 1; i++) {
-      if (typeof path[i] === "number") {
-        if (!Array.isArray(current[path[i]])) {
-          ;(current as NestedObject)[path[i]] = []
+      const keyOrIndex = path[i]
+      if (typeof keyOrIndex === "number") {
+        if (!Array.isArray(current[keyOrIndex])) {
+          ;(current as NestedObject)[keyOrIndex] = []
         }
       } else {
-        if (typeof current[path[i]] !== "object" || current[path[i]] === null) {
-          ;(current as NestedObject)[path[i]] = {}
+        if (typeof current[keyOrIndex] !== "object" || current[keyOrIndex] === null) {
+          ;(current as NestedObject)[keyOrIndex] = {}
         }
       }
 
-      current = (current as NestedObject)[path[i]]
+      current = (current as NestedObject)[keyOrIndex]
     }
 
-    if (Array.isArray(current) && typeof path[path.length - 1] === "number") {
-      ;(current as NestedValue[]).push(value)
+    const lastKeyOrIndex = path[path.length - 1]
+    if (Array.isArray(current)) {
+      if (typeof lastKeyOrIndex === "number") {
+        current[lastKeyOrIndex] = value // Set the value at the specified index
+      } else {
+        console.error("Trying to set a string key on an array.")
+      }
     } else {
-      ;(current as NestedObject)[path[path.length - 1]] = value
+      ;(current as NestedObject)[lastKeyOrIndex] = value
     }
 
     return obj
@@ -157,6 +163,11 @@ export class JsonStreamParser {
 
   private removeFromPath(): string | number | undefined {
     return this.pathStack.pop()
+  }
+
+  private isInsideObject(): boolean {
+    const currentSchemaType = pathOr(null, [...this.pathStack], this.schema.shape)
+    return currentSchemaType instanceof z.ZodObject
   }
 
   private isCurrentTypeObject(): boolean {
@@ -171,7 +182,7 @@ export class JsonStreamParser {
 
   private isCurrentArrayTypeChildObject(): boolean {
     const currentSchemaType = pathOr(null, [...this.pathStack, this.activeKey], this.schema.shape)
-    return currentSchemaType.element instanceof z.ZodObject
+    return currentSchemaType?.element instanceof z.ZodObject
   }
 
   private isExpectedArrayObject(): boolean {
@@ -186,7 +197,7 @@ export class JsonStreamParser {
     return currentObjectPath
   }
 
-  private updateCurrentObject(value: string | number): void {
+  private updateCurrentObject(value: string | number | boolean): void {
     const currentObjectPath = this.getCurrentObjectPath()
     const currentObject = pathOr({}, currentObjectPath, this.schemaInstance)
     currentObject[this.activeKey as string] = value
@@ -195,10 +206,27 @@ export class JsonStreamParser {
     this.activeKey = null
   }
 
-  private handleKeyValue(value: string | number) {
+  private handleKeyValue(value: string | number | boolean) {
     const fullPath = [...this.pathStack]
+    // console.log({
+    //   isInArray: this.isInArray,
+    //   insideObject: this.isInsideObject(),
+    //   currentTypeObject: this.isCurrentTypeObject(),
+    //   currentTypeArray: this.isCurrentTypeArray(),
+    //   currentArrayTypeChildObject: this.isCurrentArrayTypeChildObject(),
+    //   expectedArrayObject: this.isExpectedArrayObject(),
+    //   activeKey: this.activeKey,
+    //   value,
+    //   fullPath,
+    //   schemaInstance: this.schemaInstance,
+    //   expectedArrayTypeStack: this.expectedArrayTypeStack
+    // })
     if (this.isInArray) {
-      fullPath.push(this.arrayIndex++)
+      fullPath.push(this.arrayIndex)
+
+      if (!this.isExpectedArrayObject()) {
+        this.arrayIndex = this.arrayIndex + 1
+      }
     } else {
       fullPath.push(this.activeKey as string | number)
     }
@@ -227,6 +255,18 @@ export class JsonStreamParser {
       TokenType.NUMBER,
       (value: string | number) => {
         this.handleKeyValue(value as number)
+      }
+    ],
+    [
+      TokenType.TRUE,
+      () => {
+        this.handleKeyValue(true)
+      }
+    ],
+    [
+      TokenType.FALSE,
+      () => {
+        this.handleKeyValue(false)
       }
     ],
     [
@@ -268,6 +308,10 @@ export class JsonStreamParser {
         if (this.pathStack.length > 0 && !this.isInArray) {
           this.activeKey = this.removeFromPath() as string | number
         }
+
+        if (this.isInArray) {
+          this.arrayIndex = this.arrayIndex + 1
+        }
       }
     ],
     [
@@ -293,7 +337,11 @@ export class JsonStreamParser {
       TokenType.COMMA,
       () => {
         this.activeKey = null
-        this.isKey = !this.isInArray
+        if (this.isInArray && this.isExpectedArrayObject()) {
+          this.isKey = true
+        } else {
+          this.isKey = !this.isInArray
+        }
       }
     ]
   ])

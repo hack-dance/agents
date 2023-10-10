@@ -11,11 +11,11 @@ export const schema = z.object({
       aNumber: z.number()
     })
   }),
-  twoGoodThings: z.array(
+  presidentsInThe2000s: z.array(
     z.object({
       name: z.string(),
-      whyItsGood: z.string(),
-      howGoodIsIt: z.number()
+      gender: z.string(),
+      age: z.number()
     })
   )
 })
