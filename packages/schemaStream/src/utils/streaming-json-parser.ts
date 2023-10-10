@@ -50,7 +50,7 @@ function pathOr<T, U>(defaultValue: T, path: Path, object: Record<string | numbe
 }
 
 /**
- * `JsonStreamParser` is a utility class for parsing streams of json and
+ * `SchemaStream` is a utility class for parsing streams of json and
  * providing a safe-read-from stubbed version of the data before the stream
  * has fully completed.
  *
@@ -65,7 +65,7 @@ function pathOr<T, U>(defaultValue: T, path: Path, object: Record<string | numbe
  * })
  *
  * const response = await getSomeStreamOfJson()
- * const parser = new JsonStreamParser(schema)
+ * const parser = new SchemaStream(schema)
  * const streamParser = parser.parse()
  *
  * response.body?.pipeThrough(parser)
@@ -101,7 +101,7 @@ export class SchemaStream {
   private expectedArrayTypeStack: ("object" | "primitive")[]
 
   /**
-   * Constructs a new instance of the `JsonStreamParser` class.
+   * Constructs a new instance of the `SchemaStream` class.
    *
    * @param schema - The Zod schema to use for validation.
    */

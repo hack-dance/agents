@@ -1,10 +1,10 @@
 import { describe, expect, test } from "@jest/globals"
 import { ZodObject, ZodRawShape, z } from "zod"
 
-import { JsonStreamParser } from "../src/utils/streaming-json-parser"
+import { SchemaStream } from "../src/utils/streaming-json-parser"
 
 async function runTest<T extends ZodRawShape>(schema: ZodObject<T>, jsonData: object) {
-  const parser = new JsonStreamParser(schema)
+  const parser = new SchemaStream(schema)
   const stream = parser.parse()
 
   const readableStream = new ReadableStream({
@@ -24,7 +24,7 @@ async function runTest<T extends ZodRawShape>(schema: ZodObject<T>, jsonData: ob
   expect(parsedData).toEqual(jsonData)
 }
 
-describe("JsonStreamParser", () => {
+describe("SchemaStream", () => {
   test("should parse valid JSON correctly - single layer primitives", async () => {
     const schema = z.object({
       someString: z.string(),
