@@ -1,4 +1,4 @@
-# @hackdance/agents-core
+# @hackdance/agents
 A set of utilities to make working with open ai simpler.
 
 See the full docs and example usage here: [Docs](https://agents.hack.dance).
@@ -10,7 +10,7 @@ There is also a package with react hooks that make it simple to interact with th
 ## Getting Started
 
 ```bash
-pnpm add @hackdance/agents-core
+pnpm add @hackdance/agents
 ```
 
 
@@ -28,7 +28,7 @@ __
 **Chat Agent Example:**
 
 ```ts
-import { createChatAgent } from '@hackdance/agents-core';
+import { createChatAgent } from '@hackdance/agents';
 
 const myAgent = createChatAgent({
   config: {
@@ -60,7 +60,7 @@ use the structured response immeadiately, and not have to wait for the ai to fin
 completing the response.
 
 ```ts
-import { createSchemaAgent } from '@hackdance/agents-core';
+import { createSchemaAgent } from '@hackdance/agents';
 
 const myAgent = createSchemaAgent({
   config: {
@@ -98,7 +98,7 @@ Anythign returned by the api will first be validated against your provided schem
 
 Creating and using your own function definitions
 ```ts
-import { createFunctionDefinition } from '@hackdance/agents-core';
+import { createFunctionDefinition } from '@hackdance/agents';
 
 const getArticlesFn = createFunctionDefinition({
   name: "Internal Api Request",
@@ -157,7 +157,7 @@ The agent creators implement these tools internally, so you don't need to use th
 **Stream Utilities:**
 
 ```ts
-import { OaiStream } from '@hackdance/agents-core';
+import { OaiStream } from '@hackdance/agents';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const parsedStream = OaiStream(stream)
@@ -169,7 +169,7 @@ const parsedStream = OaiStream(stream)
 
 **Auto parser**
 ```ts
-import { OaiStream } from '@hackdance/agents-core';
+import { OaiStream } from '@hackdance/agents';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const parsedStream = OaiStream(stream)
@@ -180,7 +180,7 @@ const parsedStream = OaiStream(stream)
 
 **Default parser**
 ```ts
-import { OAIResponseTextParser } from '@hackdance/agents-core';
+import { OAIResponseTextParser } from '@hackdance/agents';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const textStream = OAIResponseTextParser(stream)
@@ -188,7 +188,7 @@ const textStream = OAIResponseTextParser(stream)
 
 **Function parser**
 ```ts
-import { OAIResponseFnArgsParser } from '@hackdance/agents-core';
+import { OAIResponseFnArgsParser } from '@hackdance/agents';
 
 const stream = await fetch("https://api.openai.com/completion", { ...options })
 const argumentsStream = OAIResponseFnArgsParser(stream)
@@ -202,7 +202,7 @@ const argumentsStream = OAIResponseFnArgsParser(stream)
 Basic first in first out queue. Useful for managing async operations.
 
 ```ts
-import { AsyncQueue } from '@hackdance/agents-core';
+import { AsyncQueue } from '@hackdance/agents';
  const queue = new AsyncQueue<number>();
  queue.push(1);
  queue.push(2);
@@ -217,7 +217,7 @@ import { AsyncQueue } from '@hackdance/agents-core';
 
 ```ts
 // somewhere in your async code
-import { LogGenerator } from '@hackdance/agents-core';
+import { LogGenerator } from '@hackdance/agents';
 
 export const myAsyncLogs = new LogGenerator();
 

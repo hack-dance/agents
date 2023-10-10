@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useJsonStream } from "@hackdance/agents-hooks"
+import { useJsonStream } from "@hackdance/hooks"
 
 import { schema } from "@/ai/agents/schema"
 

@@ -6,7 +6,7 @@ export default async function Page() {
       <div className="text-[80px] font-bold font-blunt">×</div>
       <div className="text-left space-y-3">
         <Link href="/agents" className="text-sm font-medium leading-none block hover:underline">
-          @hack-dance/agents-core
+          @hack-dance/agents
         </Link>
         <Link href="/hooks" className="text-sm font-medium leading-none block hover:underline">
           @hack-dance/hooks

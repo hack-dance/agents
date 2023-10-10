@@ -1,4 +1,4 @@
-import { createSchemaAgent } from "@hackdance/agents-core"
+import { createSchemaAgent } from "@hackdance/agents"
 
 import { schema } from "./schema"
 

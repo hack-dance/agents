@@ -9,6 +9,6 @@ export default defineConfig(options => {
     minify: true,
     target: "es2020",
     format: ["cjs", "esm"],
-    external: ["openai", "react", "react-dom", "@hackdance/agents-core", "zod"]
+    external: ["openai", "react", "react-dom", "@hackdance/agents", "zod"]
   }
 })
