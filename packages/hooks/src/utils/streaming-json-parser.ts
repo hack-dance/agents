@@ -146,7 +146,7 @@ export class JsonStreamParser {
     const lastKeyOrIndex = path[path.length - 1]
     if (Array.isArray(current)) {
       if (typeof lastKeyOrIndex === "number") {
-        current[lastKeyOrIndex] = value // Set the value at the specified index
+        current[lastKeyOrIndex] = value
       } else {
         console.error("Trying to set a string key on an array.")
       }
@@ -208,19 +208,7 @@ export class JsonStreamParser {
 
   private handleKeyValue(value: string | number | boolean) {
     const fullPath = [...this.pathStack]
-    // console.log({
-    //   isInArray: this.isInArray,
-    //   insideObject: this.isInsideObject(),
-    //   currentTypeObject: this.isCurrentTypeObject(),
-    //   currentTypeArray: this.isCurrentTypeArray(),
-    //   currentArrayTypeChildObject: this.isCurrentArrayTypeChildObject(),
-    //   expectedArrayObject: this.isExpectedArrayObject(),
-    //   activeKey: this.activeKey,
-    //   value,
-    //   fullPath,
-    //   schemaInstance: this.schemaInstance,
-    //   expectedArrayTypeStack: this.expectedArrayTypeStack
-    // })
+
     if (this.isInArray) {
       fullPath.push(this.arrayIndex)
 

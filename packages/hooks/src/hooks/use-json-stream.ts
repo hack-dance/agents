@@ -137,7 +137,7 @@ export function useJsonStream({
         }
 
         const chunkValue = decoder.decode(value)
-        console.log(chunkValue)
+
         result = JSON.parse(chunkValue)
 
         onReceive && onReceive(result)

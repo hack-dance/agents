@@ -11,10 +11,7 @@ export function Chat() {
   const [loading, setIsLoading] = useState(false)
 
   const { startStream, json } = useJsonStream({
-    schema: schema,
-    onEnd: resp => {
-      console.log("onEnd", resp)
-    }
+    schema: schema
   })
 
   const sendMessage = async () => {

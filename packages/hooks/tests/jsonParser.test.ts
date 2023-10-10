@@ -21,11 +21,6 @@ async function runTest<T extends ZodRawShape>(schema: ZodObject<T>, jsonData: ob
 
   const parsedData = JSON.parse(new TextDecoder().decode(value))
 
-  console.log({
-    parsedData,
-    jsonData
-  })
-
   expect(parsedData).toEqual(jsonData)
 }
 
