@@ -43,7 +43,7 @@ To install the package, run the following command:
 | onReceive        | function | Optional callback function that will be invoked when a message is received. |
 | onEnd            | function | Optional callback function that will be invoked when the chat stream ends. |
 | startingMessages | array    | Optional array of starting messages. |
-| ctx              | object   | Optional context object. |
+| ctx              | object   | Optional static context object, appended to every post body on each startStream invocation . |
 
 #### Usage
 
@@ -52,6 +52,31 @@ To install the package, run the following command:
 
   const { loading, startStream, stopStream, messages, setMessages } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: [] })
 ```
+#### startStream
+
+`startStream` is a function that starts a stream with the provided arguments and parses the incoming stream into JSON. It takes an object as an argument with the following properties:
+
+| Name    | Type   | Description |
+| ----    | ------ | ----------- |
+| url     | string | The URL of the stream. |
+| prompt  | string | A string prompt included in the  post body on the request to your url. |
+| ctx     | object | Optional context object, sent in the post body on the request to your url. |
+
+Example:
+
+```jsx
+  startStream({ url: 'http://example.com', prompt: "hey there", ctx: { key: 'value' } });
+```
+
+#### stopStream
+
+`stopStream` is a function that stops the stream. It doesn't take any arguments.
+
+Example:
+```jsx
+  stopStream();
+```
+
 
 
 ### useJsonStream
@@ -63,17 +88,41 @@ To install the package, run the following command:
 | Name      | Type     | Description |
 | --------- | -------- | ----------- |
 | onReceive | function | Optional callback function that will be invoked when a JSON object is received. |
-| onEnd     | function | Optional callback function that will be invoked when the chat stream ends. |
+| onEnd     | function | Optional callback function that will be invoked when the JSON stream ends. |
 | schema    | z.ZodObject   | The zod schema for the JSON data, the top level must be an object. |
+| ctx       | object   | Optional static context object, appended to every post body on each startStream invocation . |
 
 #### Usage
 
-  ```jsx
+```jsx
   import { useJsonStream } from '@hackdance/hooks';
 
-  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., onEnd: ..., schema: ... });
-  ```
+  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., onEnd: ..., schema: ..., ctx: {} });
+```
 
+#### startStream
+
+`startStream` is a function that starts a stream with the provided arguments and parses the incoming stream into JSON. It takes an object as an argument with the following properties:
+
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| url  | string | The URL of the stream. |
+| ctx  | object | Optional context object, sent in the post body to your url. |
+
+Example:
+
+```jsx
+  startStream({ url: 'http://example.com', ctx: { key: 'value' } });
+```
+
+#### stopStream
+
+`stopStream` is a function that stops the stream. It doesn't take any arguments.
+
+Example:
+```jsx
+  stopStream();
+```
 
 ## License
 

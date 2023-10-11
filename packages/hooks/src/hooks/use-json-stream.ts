@@ -6,7 +6,6 @@ import { UseStreamProps, useStream } from "./use-stream"
 
 interface StartStreamArgs {
   url: string
-  prompt: string
   ctx?: object
 }
 
@@ -71,15 +70,14 @@ export function useJsonStream<T extends z.ZodRawShape>({
    *
    * @example
    * ```
-   * startStream({ url: 'http://example.com', body: { key: 'value' } });
+   * startStream({ url: 'http://example.com', ctx: { key: 'value' } });
    * ```
    */
-  const startStream = async ({ url, prompt, ctx: completionCtx = {} }: StartStreamArgs) => {
+  const startStream = async ({ url, ctx: completionCtx = {} }: StartStreamArgs) => {
     setLoading(true)
     const response = await startStreamBase({
       url,
       body: {
-        prompt,
         ctx: {
           ...ctx,
           ...completionCtx
