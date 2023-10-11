@@ -410,6 +410,11 @@ export class SchemaStream {
         if (decoded.startsWith('"') && !decoded.startsWith('\\"')) {
           decoded = decoded.slice(1)
         }
+
+        if (decoded.startsWith(":") && !decoded.startsWith("\\:")) {
+          decoded = decoded.slice(1)
+        }
+
         if (decoded.endsWith('"') && !decoded.endsWith('\\"')) {
           decoded = decoded.slice(0, -1)
         }
