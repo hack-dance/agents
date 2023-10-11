@@ -54,10 +54,12 @@ export function useJsonStream<T extends z.ZodRawShape>({
   startStream: StartStream
   stopStream: StopStream
   json: z.infer<typeof schema>
+  loading: boolean
 } {
   const streamParser = new SchemaStream(schema)
   const stubbedValue = streamParser.getSchemaStub(schema)
 
+  const [loading, setLoading] = useState(false)
   const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
   const { startStream: startStreamBase, stopStream } = useStream(streamProps)
 
@@ -73,6 +75,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
    * ```
    */
   const startStream = async ({ url, prompt, ctx: completionCtx = {} }: StartStreamArgs) => {
+    setLoading(true)
     const response = await startStreamBase({
       url,
       body: {
@@ -98,6 +101,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
           done = doneReading
 
           if (done) {
+            setLoading(false)
             onEnd && onEnd(json)
             break
           }
@@ -116,6 +120,8 @@ export function useJsonStream<T extends z.ZodRawShape>({
 
           console.error(`useJsonStream: error`, err)
           throw err
+        } finally {
+          setLoading(false)
         }
       }
     }
@@ -124,6 +130,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
   return {
     startStream,
     stopStream,
-    json
+    json,
+    loading
   }
 }
