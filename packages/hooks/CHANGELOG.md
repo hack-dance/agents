@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.0.2
+
+### Patch Changes
+
+- [#31](https://github.com/hack-dance/agents/pull/31) [`0592c21`](https://github.com/hack-dance/agents/commit/0592c212a86586551845db8b31b5059c75ce490d) Thanks [@roodboi](https://github.com/roodboi)! - Added onEnd callback to the use json stream hook
+
 ## 0.0.1
 
 ### Patch Changes
