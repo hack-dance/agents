@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.0.4
+
+### Patch Changes
+
+- [#35](https://github.com/hack-dance/agents/pull/35) [`1d95f29`](https://github.com/hack-dance/agents/commit/1d95f29a0ed209228cbbd729be6bb372a57b9c1b) Thanks [@roodboi](https://github.com/roodboi)! - Update loading switch and use a ref to make sure were working on the right value
+
 ## 0.0.3
 
 ### Patch Changes
