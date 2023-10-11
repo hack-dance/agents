@@ -22,6 +22,7 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
   onReceive?: (value: object | unknown) => void
   onEnd?: (json: object) => void
   schema: z.ZodObject<T>
+  ctx?: object
 }
 
 /**
@@ -47,6 +48,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
   onReceive,
   onEnd,
   schema,
+  ctx = {},
   ...streamProps
 }: UseJsonStreamProps<T>): {
   startStream: StartStream
@@ -70,8 +72,17 @@ export function useJsonStream<T extends z.ZodRawShape>({
    * startStream({ url: 'http://example.com', body: { key: 'value' } });
    * ```
    */
-  const startStream = async (args: StartStreamArgs) => {
-    const response = await startStreamBase(args)
+  const startStream = async ({ url, prompt, ctx: completionCtx = {} }: StartStreamArgs) => {
+    const response = await startStreamBase({
+      url,
+      body: {
+        prompt,
+        ctx: {
+          ...ctx,
+          ...completionCtx
+        }
+      }
+    })
 
     if (response?.body) {
       const parser = streamParser.parse()
