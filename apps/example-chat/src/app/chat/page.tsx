@@ -1,4 +1,4 @@
-import { JsonStream } from "@/components/json-stream"
+import { Chat } from "@/components/chat"
 
 export default async function Page() {
   return (
@@ -6,7 +6,7 @@ export default async function Page() {
       <h1 className="text-4xl font-blunt">Json stream</h1>
       <p></p>
       <div className="flex gap-2 justify-center items-center mt-8 container max-w-3xl max-h-[70vh] overflow-hidden">
-        <JsonStream />
+        <Chat />
       </div>
     </div>
   )
