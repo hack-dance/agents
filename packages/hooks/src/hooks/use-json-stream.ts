@@ -20,6 +20,7 @@ interface StopStream {
 
 export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamProps {
   onReceive?: (value: object | unknown) => void
+  onEnd?: (json: object) => void
   schema: z.ZodObject<T>
 }
 
@@ -44,6 +45,7 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
  */
 export function useJsonStream<T extends z.ZodRawShape>({
   onReceive,
+  onEnd,
   schema,
   ...streamProps
 }: UseJsonStreamProps<T>): {
@@ -83,11 +85,15 @@ export function useJsonStream<T extends z.ZodRawShape>({
         try {
           const { value, done: doneReading } = await reader.read()
           done = doneReading
+
           if (done) {
+            onEnd && onEnd(json)
             break
           }
+
           const chunkValue = decoder.decode(value)
           const result = JSON.parse(chunkValue)
+
           setJson(result)
           onReceive && onReceive(result)
         } catch (err) {
