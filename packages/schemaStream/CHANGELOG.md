@@ -1,5 +1,11 @@
 # schema-stream
 
+## 0.0.2
+
+### Patch Changes
+
+- [`408b0c7`](https://github.com/hack-dance/agents/commit/408b0c746a93bdc800cbe09363995408d1df94d7) Thanks [@roodboi](https://github.com/roodboi)! - Update streaming string value so that we dont get a colon at the start of the string
+
 ## 0.0.1
 
 ### Patch Changes
