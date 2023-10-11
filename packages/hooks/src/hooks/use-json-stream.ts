@@ -6,7 +6,6 @@ import { UseStreamProps, useStream } from "./use-stream"
 
 interface StartStreamArgs {
   url: string
-  prompt: string
   ctx?: object
 }
 
@@ -22,6 +21,7 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
   onReceive?: (value: object | unknown) => void
   onEnd?: (json: object) => void
   schema: z.ZodObject<T>
+  ctx?: object
 }
 
 /**
@@ -47,15 +47,18 @@ export function useJsonStream<T extends z.ZodRawShape>({
   onReceive,
   onEnd,
   schema,
+  ctx = {},
   ...streamProps
 }: UseJsonStreamProps<T>): {
   startStream: StartStream
   stopStream: StopStream
   json: z.infer<typeof schema>
+  loading: boolean
 } {
   const streamParser = new SchemaStream(schema)
   const stubbedValue = streamParser.getSchemaStub(schema)
 
+  const [loading, setLoading] = useState(false)
   const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
   const { startStream: startStreamBase, stopStream } = useStream(streamProps)
 
@@ -67,11 +70,20 @@ export function useJsonStream<T extends z.ZodRawShape>({
    *
    * @example
    * ```
-   * startStream({ url: 'http://example.com', body: { key: 'value' } });
+   * startStream({ url: 'http://example.com', ctx: { key: 'value' } });
    * ```
    */
-  const startStream = async (args: StartStreamArgs) => {
-    const response = await startStreamBase(args)
+  const startStream = async ({ url, ctx: completionCtx = {} }: StartStreamArgs) => {
+    setLoading(true)
+    const response = await startStreamBase({
+      url,
+      body: {
+        ctx: {
+          ...ctx,
+          ...completionCtx
+        }
+      }
+    })
 
     if (response?.body) {
       const parser = streamParser.parse()
@@ -87,6 +99,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
           done = doneReading
 
           if (done) {
+            setLoading(false)
             onEnd && onEnd(json)
             break
           }
@@ -105,6 +118,8 @@ export function useJsonStream<T extends z.ZodRawShape>({
 
           console.error(`useJsonStream: error`, err)
           throw err
+        } finally {
+          setLoading(false)
         }
       }
     }
@@ -113,6 +128,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
   return {
     startStream,
     stopStream,
-    json
+    json,
+    loading
   }
 }
