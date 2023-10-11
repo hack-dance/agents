@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { SchemaStream } from "schema-stream"
 import z from "zod"
 
@@ -59,8 +59,9 @@ export function useJsonStream<T extends z.ZodRawShape>({
   const stubbedValue = streamParser.getSchemaStub(schema)
 
   const [loading, setLoading] = useState(false)
-  const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
   const { startStream: startStreamBase, stopStream } = useStream(streamProps)
+  const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
+  const jsonRef = useRef<z.infer<typeof schema>>(json)
 
   /**
    * @function startStream
@@ -100,17 +101,23 @@ export function useJsonStream<T extends z.ZodRawShape>({
 
           if (done) {
             setLoading(false)
-            onEnd && onEnd(json)
             break
           }
 
           const chunkValue = decoder.decode(value)
           const result = JSON.parse(chunkValue)
 
+          jsonRef.current = result
           setJson(result)
           onReceive && onReceive(result)
+
+          if (done) {
+            onEnd && onEnd(jsonRef.current)
+            setLoading(false)
+          }
         } catch (err) {
           done = true
+          setLoading(false)
           if (err?.name === "AbortError") {
             console.log("useJsonStream: aborted", err)
             return null
@@ -118,8 +125,6 @@ export function useJsonStream<T extends z.ZodRawShape>({
 
           console.error(`useJsonStream: error`, err)
           throw err
-        } finally {
-          setLoading(false)
         }
       }
     }
