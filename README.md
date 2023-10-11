@@ -1,4 +1,4 @@
-#hack-dance oss
+# hack-dance
 > A collection of oss packages.
 
 
@@ -15,4 +15,4 @@ A tool that takes a raw input stream of data and provides an incrementally hydra
 
 
 ## [hooks](https://github.com/hack-dance/agents/packages/hooks)
-React hooks for workign with streams.
+React hooks for working with streams.
