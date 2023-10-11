@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.0.3
+
+### Patch Changes
+
+- [#33](https://github.com/hack-dance/agents/pull/33) [`cbeec8b`](https://github.com/hack-dance/agents/commit/cbeec8bfe8ef85cae14f42d88f13d66d9f7e2795) Thanks [@roodboi](https://github.com/roodboi)! - Updating json hook to support context properly, provide a loading state and be more in line with the stream hook it extends
+
 ## 0.0.2
 
 ### Patch Changes
