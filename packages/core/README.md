@@ -1,9 +1,9 @@
 # @hackdance/agents
 A set of utilities to make working with open ai simpler.
 
-See the full docs and example usage here: [Docs](https://agents.hack.dance).
+See the full docs and example usage here: [Docs](https://oss.hack.dance).
 
-There is also a package with react hooks that make it simple to interact with these agents and streams: [@hackdance/hooks](https://agents.hack.dance)
+There is also a package with react hooks that make it simple to interact with these agents and streams: [@hackdance/hooks](https://oss.hack.dance)
 
 
 
