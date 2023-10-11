@@ -1,1 +1,79 @@
-# Hooks
+# @hackdance/hooks
+
+This package provides custom React hooks for managing streams, chat streams, and JSON streams.
+
+## Installation
+
+To install the package, run the following command:
+
+```bash
+  pnpm add @hackdance/hooks
+```
+
+## Hooks
+
+### useStream
+
+`useStream` is a custom React hook that manages a stream. It provides functionalities to start and stop the stream.
+
+#### Props
+
+| Name          | Type     | Description |
+| ------------- | -------- | ----------- |
+| onBeforeStart | function | Optional callback function that will be invoked before the stream starts. |
+| onStop        | function | Optional callback function that will be invoked when the stream stops. |
+
+#### Usage
+
+```jsx
+  import { useStream } from '@hackdance/hooks';
+
+  const { startStream, stopStream } = useStream({ onBeforeStart: ..., onStop: ... });
+```
+
+
+### useChatStream
+
+`useChatStream` is a custom React hook that extends the `useStream` hook to manage a chat stream. It provides functionalities to start and stop the chat stream, manage the chat messages, and manage the loading state.
+
+#### Props
+
+| Name             | Type     | Description |
+| ---------------- | -------- | ----------- |
+| onReceive        | function | Optional callback function that will be invoked when a message is received. |
+| onEnd            | function | Optional callback function that will be invoked when the chat stream ends. |
+| startingMessages | array    | Optional array of starting messages. |
+| ctx              | object   | Optional context object. |
+
+#### Usage
+
+```jsx
+  import { useChatStream } from '@hackdance/hooks'
+
+  const { loading, startStream, stopStream, messages, setMessages } = useChatStream({ onBeforeStart: ..., onReceive: ..., onEnd: ..., startingMessages: [] })
+```
+
+
+### useJsonStream
+
+`useJsonStream` is a custom React hook that extends the `useStream` hook to add JSON parsing functionality. It uses the `SchemaStream` to parse the incoming stream into JSON.
+
+#### Props
+
+| Name      | Type     | Description |
+| --------- | -------- | ----------- |
+| onReceive | function | Optional callback function that will be invoked when a JSON object is received. |
+| schema    | z.ZodObject   | The zod schema for the JSON data, the top level must be an object. |
+
+#### Usage
+
+  ```jsx
+  import { useJsonStream } from '@hackdance/hooks';
+
+  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
+  ```
+
+
+## License
+
+MIT

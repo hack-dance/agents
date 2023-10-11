@@ -94,7 +94,7 @@ export const createChatAgent = ({
 
         return response
       } catch (error) {
-        console.error("@hackdance/agents-core error agent instance error", error)
+        console.error("@hackdance/agents error agent instance error", error)
         throw new Error(error)
       }
     },

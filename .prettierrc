@@ -15,7 +15,7 @@
     "^@/config/(.*)$",
     "^@/lib/(.*)$",
     "^@/hooks/(.*)$",
-    "^@hack-dance/ui/(.*)$",
+    "^@hackdance/ui/(.*)$",
     "^@/components/(.*)$",
     "^@/styles/(.*)$",
     "^@/app/(.*)$",

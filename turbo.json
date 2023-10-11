@@ -6,22 +6,24 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-    "hack-dance-agents-hooks#build": {
-      "dependsOn": [
-        "^@hackdance/agents-core#build",
-        "^@hackdance/agents-hooks#build"
-      ]
-    },
-    "@hackdance/agents-hooks#build": {
+
+    "@hackdance/hooks#build": {
       "outputs": ["dist/**"],
       "dependsOn": [
-        "^@hackdance/agents-core#build"
+        "^schema-stream#build"
       ]
     },
-    "@hackdance/agents-core#build": {
+    "@hackdance/agents#build": {
+      "outputs": ["dist/**"]
+    },
+    "schema-stream#build": {
       "outputs": ["dist/**"]
     },
     "lint": {},
+    "test": {
+      "cache": false,
+      "persistent": true
+    },
     "dev": {
       "cache": false,
       "persistent": true

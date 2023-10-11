@@ -1,21 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { useChatStream } from "@hackdance/agents-hooks"
+import { useChatStream } from "@hackdance/hooks"
 
-import { FloatingChat } from "@/components/floating-chat"
-import { PromptComposer } from "@/components/prompt-composer"
+import { FloatingChat } from "./floating-chat"
+import { PromptComposer } from "./prompt-composer"
 
 export function Chat() {
   const [prompt, setPrompt] = useState("")
   const [loading, setIsLoading] = useState(false)
 
-  const { startStream, messages } = useChatStream({
-    startingMessages: []
-  })
+  const { startStream, messages } = useChatStream({})
 
   const sendMessage = async () => {
-    if (!prompt.length || loading) return
+    if (loading) return
 
     setIsLoading(true)
     setPrompt("")
@@ -32,30 +30,17 @@ export function Chat() {
     }
   }
 
-  const handleInput = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setPrompt(event.target.value ?? "")
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (event.key === "Enter") {
-      event.preventDefault() // Prevent the default newline behavior of the Enter key
-      sendMessage()
-    }
-  }
-
   return (
     <div className="flex flex-col max-h-full">
-      <div className="max-h-full overflow-y-auto flex-1 px-12 py-8">
-        <FloatingChat messages={messages} />
+      <FloatingChat messages={messages} />
+      <div className="gap-4 flex justify-center">
+        <PromptComposer
+          onSubmit={sendMessage}
+          prompt={prompt}
+          onChange={event => setPrompt(event.target.value)}
+          loading={loading}
+        />
       </div>
-
-      <PromptComposer
-        loading={loading}
-        onChange={handleInput}
-        onKeyDown={handleKeyDown}
-        onSubmit={sendMessage}
-        prompt={prompt}
-      />
     </div>
   )
 }

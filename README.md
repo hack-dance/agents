@@ -1,60 +1,18 @@
-# @hack-dance/agents
-> Copy, Paste, AI: A modular toolkit for building more then just chat bots.
+#hack-dance oss
+> A collection of oss packages.
 
-[docs](https://agents.hack.dance)
-[cli on npm](https://www.npmjs.com/package/@hackdance/agents-cli)
 
-:information_source: **FYI**: These docs are a work in progress. For now, all code is in TypeScript and examples assume Next.js 13+. Feel free to reach out on Twitter or create an issue on GitHub if something is unclear or broken. More examples and framework integrations are coming soon. Thanks for your patience!
+[docs](https://oss.hack.dance)
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Installation](#installation)
-- [Chat Agent](#chat-agent)
-- [Schema Agent](#schema-agent)
-- [Streaming](#streaming)
 
-## Introduction
-A collection of AI utilities, hooks, and abstractions for building AI agents with OpenAI.
+## [agents](https://github.com/hack-dance/agents/packages/core)
+A set of utilities for building, managing and using agents with OpenAI, in node and the browser.
 
-# Installation
 
-Install the necessary dependencies with your package manager of choice.
-```zsh
-  pnpm add openai zod
-```
-
-## Standard install
-Add the core agents package to your project
-
-```zsh
-  pnpm add @hackdance/agents-core
-```
-
-Add the hooks package to your project
-
-```zsh
-  pnpm add @hackdance/agents-hooks
-```
+## [schema-stream](https://github.com/hack-dance/agents/packages/schemaStream)
+A tool that takes a raw input stream of data and provides an incrementally hydrated version of the data as it is received, allowing it to be safely read from before the stream has completed.
 
 
 
-## Copy & paste w/ cli
-Add the core agent utilities and/or hooks using interactive CLI
-
-```zsh
-  npx @hackdance/agents-cli add --path=src
-```
-
-Optionally setup import aliases
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./*"]
-    }
-  }
-}
-```
-
-
+## [hooks](https://github.com/hack-dance/agents/packages/hooks)
+React hooks for workign with streams.

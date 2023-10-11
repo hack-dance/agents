@@ -1,28 +1,30 @@
 import Link from "next/link"
 
-import { docs } from "@/config/docs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export function DocNav() {
+export function DocNav({ packageConfig }) {
   return (
     <>
       <ScrollArea className="h-full">
         <div className="pb-6">
-          {docs.map((docSection, index) => (
+          {packageConfig.sections.map((docSection, index) => (
             <div key={index}>
+              <h3 className="mb-2 text-sm font-semibold">{docSection.title}</h3>
               <div className="grid grid-flow-row auto-rows-max text-sm mb-2">
-                {docSection.map(doc => (
+                {docSection.pages.map(doc => (
                   <div key={doc.title}>
                     {doc?.titlePage ? (
                       <h4 className="mb-1 rounded-md px-2 text-sm font-semibold">
-                        <Link className="hover:underline" href={`/docs/${doc.slug}`}>
+                        <Link replace={false} className="hover:underline" href={`/${doc.slug}`}>
                           {doc.title}
                         </Link>
                       </h4>
                     ) : (
                       <Link
+                        replace={false}
+                        scroll={false}
                         className="font-medium text-muted-foreground group flex w-full items-center rounded-md border border-transparent px-3 py-1 hover:underline"
-                        href={`/docs/${doc.slug}`}
+                        href={`/${doc.slug}`}
                       >
                         {doc.title}
                       </Link>

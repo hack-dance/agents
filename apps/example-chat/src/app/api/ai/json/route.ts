@@ -1,14 +1,13 @@
-import { exampleAgent } from "@/ai/agents/chat-agent"
+import { exampleAgent } from "@/ai/agents/json-agent"
 
 export const runtime = "edge"
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const { prompt = "", ctx } = await request.json()
+    const { prompt = "" } = await request.json()
 
     const stream = await exampleAgent.completionStream({
-      prompt,
-      messages: ctx?.messages
+      prompt
     })
 
     return new Response(stream)

@@ -1,6 +1,7 @@
 import fs from "fs"
 import createMDX from "@next/mdx"
 import rehypePrettyCode from "rehype-pretty-code"
+import remarkGfm from "remark-gfm"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {}
@@ -13,7 +14,7 @@ const options = {
 const withMDX = createMDX({
   options: {
     extension: /\.mdx?$/,
-    remarkPlugins: [],
+    remarkPlugins: [remarkGfm],
     rehypePlugins: [[rehypePrettyCode, options]]
   }
 })

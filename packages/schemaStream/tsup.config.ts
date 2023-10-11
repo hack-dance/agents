@@ -7,8 +7,8 @@ export default defineConfig(options => {
     watch: options.watch,
     sourcemap: true,
     minify: true,
-    format: ["esm", "cjs"],
-    target: "esnext",
-    outDir: "dist"
+    target: "es2020",
+    format: ["cjs", "esm"],
+    external: ["openai", "react", "react-dom", "@hackdance/agents", "zod"]
   }
 })

@@ -1,5 +1,5 @@
 {
-  "name": "hack-dance-agents",
+  "name": "hack-dance-docs",
   "version": "0.1.5",
   "private": true,
   "engines": {
@@ -15,8 +15,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hackdance/agents-core": "workspace:*",
-    "@hackdance/agents-hooks": "*",
+    "@hackdance/agents": "latest",
+    "@hackdance/hooks": "latest",
     "@hookform/resolvers": "^3.1.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.4",
@@ -70,6 +70,7 @@
     "react-markdown": "^8.0.7",
     "rehype-highlight": "^6.0.0",
     "rehype-pretty-code": "^0.10.1",
+    "remark-gfm": "^3.0.1",
     "shiki": "^0.14.4",
     "sonner": "^0.6.1",
     "tailwind-merge": "^1.13.2",

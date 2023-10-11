@@ -1,4 +1,4 @@
-import { createChatAgent } from "@hackdance/agents-core"
+import { createChatAgent } from "@hackdance/agents"
 
 const primaryIdentity = `
   you are an ai that is good at everything.
