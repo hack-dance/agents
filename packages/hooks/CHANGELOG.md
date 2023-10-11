@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.0.5
+
+### Patch Changes
+
+- [`f987f68`](https://github.com/hack-dance/agents/commit/f987f680a29b95d4df2c0e3060eeca1320743a12) Thanks [@roodboi](https://github.com/roodboi)! - Update the order of the onEnd call
+
 ## 0.0.4
 
 ### Patch Changes
