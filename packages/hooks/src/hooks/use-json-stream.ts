@@ -100,6 +100,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
           done = doneReading
 
           if (done) {
+            onEnd && onEnd(jsonRef.current)
             setLoading(false)
             break
           }
@@ -110,11 +111,6 @@ export function useJsonStream<T extends z.ZodRawShape>({
           jsonRef.current = result
           setJson(result)
           onReceive && onReceive(result)
-
-          if (done) {
-            onEnd && onEnd(jsonRef.current)
-            setLoading(false)
-          }
         } catch (err) {
           done = true
           setLoading(false)
