@@ -4,6 +4,12 @@
 
 It uses Zod for schema validation and the [@streamparser/json](https://www.npmjs.com/package/@streamparser/json) library for parsing JSON from an input stream.
 
+
+## [@hackdance/hooks](https://github.com/hack-dance/agents/packages/hooks)
+A set of react hooks for working with streams. Includes a use-json-stream hook that uses this package
+to incrementally parse a stream of json data.
+
+
 ## Installation
 
 ```bash
@@ -23,8 +29,8 @@ To use `schema-stream`, you need to create a new instance of the class, passing 
 ```typescript
 
 const schema = z.object({
-someString: z.string(),
-someNumber: z.number()
+  someString: z.string(),
+  someNumber: z.number()
 })
 
 const response = await getSomeStreamOfJson()

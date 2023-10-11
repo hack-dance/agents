@@ -15,7 +15,7 @@ export default async function Page() {
           href="/schema-stream"
           className="text-sm font-medium leading-none block hover:underline"
         >
-          schemaStream
+          schema-stream
         </Link>
       </div>
     </div>
