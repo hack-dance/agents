@@ -10,7 +10,7 @@ There is also a package with react hooks that make it simple to interact with th
 ## Getting Started
 
 ```bash
-pnpm add @hackdance/agents
+pnpm add openai zod @hackdance/agents
 ```
 
 

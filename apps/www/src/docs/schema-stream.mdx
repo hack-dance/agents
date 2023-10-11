@@ -7,7 +7,7 @@ It uses Zod for schema validation and the [@streamparser/json](https://www.npmjs
 ## Installation
 
 ```bash
-  pnpm add schema-stream
+  pnpm add zod schema-stream
 ```
 
 
