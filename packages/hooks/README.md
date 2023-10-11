@@ -63,6 +63,7 @@ To install the package, run the following command:
 | Name      | Type     | Description |
 | --------- | -------- | ----------- |
 | onReceive | function | Optional callback function that will be invoked when a JSON object is received. |
+| onEnd     | function | Optional callback function that will be invoked when the chat stream ends. |
 | schema    | z.ZodObject   | The zod schema for the JSON data, the top level must be an object. |
 
 #### Usage
@@ -70,7 +71,7 @@ To install the package, run the following command:
   ```jsx
   import { useJsonStream } from '@hackdance/hooks';
 
-  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
+  const { loading, startStream, stopStream, json } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., onEnd: ..., schema: ... });
   ```
 
 
