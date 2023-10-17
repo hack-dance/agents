@@ -30,7 +30,10 @@ const getTypeFromZod = (schema: AnyZodType): PropertyType => {
 }
 
 const getDescriptionAndType = (schema: AnyZodType) => {
-  const maybeDescription = schema._def.checks?.find(x => x.kind === "message")
+  const maybeDescription = `
+    ${schema._def?.description ?? ""}\n
+    rules: ${JSON.stringify(schema._def?.checks ?? []) ?? ""}
+  `
 
   if (schema instanceof ZodObject) {
     const properties = {}
@@ -41,7 +44,7 @@ const getDescriptionAndType = (schema: AnyZodType) => {
 
     return {
       type: getTypeFromZod(schema),
-      description: maybeDescription?.message,
+      description: maybeDescription,
       properties
     }
   }
@@ -49,14 +52,14 @@ const getDescriptionAndType = (schema: AnyZodType) => {
   if (schema instanceof ZodArray) {
     return {
       type: getTypeFromZod(schema),
-      description: maybeDescription?.message,
+      description: maybeDescription,
       items: getDescriptionAndType(schema.element)
     }
   }
 
   return {
     type: getTypeFromZod(schema),
-    description: maybeDescription?.message
+    description: maybeDescription
   }
 }
 
