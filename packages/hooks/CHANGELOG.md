@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.1.0
+
+### Minor Changes
+
+- [#41](https://github.com/hack-dance/agents/pull/41) [`44b117d`](https://github.com/hack-dance/agents/commit/44b117dbd270eaca14bfa295cb5bdfe06a645e51) Thanks [@roodboi](https://github.com/roodboi)! - Updated hooks apis to accept headers and body and deprecated context on the startStream methods - ctx will still pass through as default on the use invocation
+
 ## 0.0.6
 
 ### Patch Changes
