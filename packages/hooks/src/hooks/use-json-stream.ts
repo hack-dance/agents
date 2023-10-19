@@ -6,7 +6,12 @@ import { UseStreamProps, useStream } from "./use-stream"
 
 interface StartStreamArgs {
   url: string
+  /**
+   * @deprecated This property is deprecated and will be removed in future versions. Use body instead.
+   */
   ctx?: object
+  body?: object
+  headers?: Record<string, string>
 }
 
 interface StartStream {
@@ -21,6 +26,7 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
   onReceive?: (value: object | unknown) => void
   onEnd?: (json: object) => void
   schema: z.ZodObject<T>
+  defaultHeaders?: Record<string, string>
   ctx?: object
 }
 
@@ -48,6 +54,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
   onEnd,
   schema,
   ctx = {},
+  defaultHeaders,
   ...streamProps
 }: UseJsonStreamProps<T>): {
   startStream: StartStream
@@ -74,11 +81,21 @@ export function useJsonStream<T extends z.ZodRawShape>({
    * startStream({ url: 'http://example.com', ctx: { key: 'value' } });
    * ```
    */
-  const startStream = async ({ url, ctx: completionCtx = {} }: StartStreamArgs) => {
+  const startStream = async ({
+    url,
+    ctx: completionCtx = {},
+    body = {},
+    headers
+  }: StartStreamArgs) => {
     setLoading(true)
     const response = await startStreamBase({
       url,
+      headers: {
+        ...defaultHeaders,
+        ...headers
+      },
       body: {
+        ...body,
         ctx: {
           ...ctx,
           ...completionCtx
