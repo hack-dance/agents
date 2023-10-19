@@ -73,7 +73,7 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
         method,
         headers,
         signal: abortController.signal,
-        body: JSON.stringify(body)
+        ...(method === "POST" ? { body: JSON.stringify(body) } : {})
       })
 
       if (!response.ok) {
