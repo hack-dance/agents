@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.1.1
+
+### Patch Changes
+
+- [`38c1770`](https://github.com/hack-dance/agents/commit/38c17700b1e0eda0013f7d98dec970be1e7b4509) Thanks [@roodboi](https://github.com/roodboi)! - hot fix for GET requests, to not include the body
+
 ## 0.1.0
 
 ### Minor Changes
