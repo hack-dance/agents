@@ -22,6 +22,7 @@ interface StartStreamArgs {
   ctx?: object
   body?: object
   headers?: Record<string, string>
+  method?: "GET" | "POST"
 }
 
 interface StartStream {
@@ -46,6 +47,7 @@ export interface UseChatStreamProps extends UseStreamProps {
   startingMessages?: Messages
   ctx?: object
   defaultHeaders?: Record<string, string>
+  defaultMethod?: "GET" | "POST"
 }
 
 /**
@@ -75,6 +77,7 @@ export function useChatStream({
   startingMessages = [],
   ctx = {},
   defaultHeaders,
+  defaultMethod = "POST",
   ...streamProps
 }: UseChatStreamProps): UseChatStreamPayload {
   const [manualRenders, setManualRenders] = useState(0)
@@ -126,7 +129,8 @@ export function useChatStream({
     prompt,
     ctx: completionCtx = {},
     body = {},
-    headers = {}
+    headers = {},
+    method
   }: StartStreamArgs) => {
     try {
       const userMessage = {
@@ -141,6 +145,7 @@ export function useChatStream({
 
       const response = await startStreamBase({
         url,
+        method: method ?? defaultMethod ?? "POST",
         headers: {
           ...defaultHeaders,
           ...headers

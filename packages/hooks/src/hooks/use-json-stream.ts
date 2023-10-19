@@ -12,6 +12,7 @@ interface StartStreamArgs {
   ctx?: object
   body?: object
   headers?: Record<string, string>
+  method?: "GET" | "POST"
 }
 
 interface StartStream {
@@ -27,6 +28,7 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
   onEnd?: (json: object) => void
   schema: z.ZodObject<T>
   defaultHeaders?: Record<string, string>
+  defaultMethod?: "GET" | "POST"
   ctx?: object
 }
 
@@ -55,6 +57,7 @@ export function useJsonStream<T extends z.ZodRawShape>({
   schema,
   ctx = {},
   defaultHeaders,
+  defaultMethod = "POST",
   ...streamProps
 }: UseJsonStreamProps<T>): {
   startStream: StartStream
@@ -85,11 +88,13 @@ export function useJsonStream<T extends z.ZodRawShape>({
     url,
     ctx: completionCtx = {},
     body = {},
-    headers
+    headers,
+    method
   }: StartStreamArgs) => {
     setLoading(true)
     const response = await startStreamBase({
       url,
+      method: method ?? defaultMethod ?? "POST",
       headers: {
         ...defaultHeaders,
         ...headers

@@ -4,6 +4,7 @@ export interface StartStreamArgs {
   url: string
   body?: object
   headers?: Record<string, string>
+  method?: "GET" | "POST"
 }
 
 interface StartStream {
@@ -59,7 +60,8 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
   const startStream = async ({
     url,
     body = {},
-    headers = {}
+    headers = {},
+    method = "POST"
   }: StartStreamArgs): Promise<Response> => {
     try {
       const abortController = new AbortController()
@@ -68,7 +70,7 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
       onBeforeStart && onBeforeStart()
 
       const response = await fetch(`${url}`, {
-        method: "POST",
+        method,
         headers,
         signal: abortController.signal,
         body: JSON.stringify(body)
