@@ -16,7 +16,13 @@ type OnEndArgs = {
 interface StartStreamArgs {
   url: string
   prompt: string
+  /**
+   * @deprecated This property is deprecated and will be removed in future versions. Use body instead.
+   */
   ctx?: object
+  body?: object
+  headers?: Record<string, string>
+  method?: "GET" | "POST"
 }
 
 interface StartStream {
@@ -40,6 +46,8 @@ export interface UseChatStreamProps extends UseStreamProps {
   onEnd?: (args: OnEndArgs) => void
   startingMessages?: Messages
   ctx?: object
+  defaultHeaders?: Record<string, string>
+  defaultMethod?: "GET" | "POST"
 }
 
 /**
@@ -68,6 +76,8 @@ export function useChatStream({
   onEnd,
   startingMessages = [],
   ctx = {},
+  defaultHeaders,
+  defaultMethod = "POST",
   ...streamProps
 }: UseChatStreamProps): UseChatStreamPayload {
   const [manualRenders, setManualRenders] = useState(0)
@@ -114,7 +124,14 @@ export function useChatStream({
    * startStream({ url: 'http://example.com', prompt: 'Hello, world!', ctx: { key: 'value' } });
    * ```
    */
-  const startStream = async ({ url, prompt, ctx: completionCtx = {} }: StartStreamArgs) => {
+  const startStream = async ({
+    url,
+    prompt,
+    ctx: completionCtx = {},
+    body = {},
+    headers = {},
+    method
+  }: StartStreamArgs) => {
     try {
       const userMessage = {
         content: prompt,
@@ -128,7 +145,13 @@ export function useChatStream({
 
       const response = await startStreamBase({
         url,
+        method: method ?? defaultMethod ?? "POST",
+        headers: {
+          ...defaultHeaders,
+          ...headers
+        },
         body: {
+          ...body,
           prompt,
           ctx: {
             messages: messagesRef.current,

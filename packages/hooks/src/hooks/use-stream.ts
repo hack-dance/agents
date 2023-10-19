@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef } from "react"
 export interface StartStreamArgs {
   url: string
   body?: object
+  headers?: Record<string, string>
+  method?: "GET" | "POST"
 }
 
 interface StartStream {
@@ -55,7 +57,12 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
    * startStream({ url: 'http://example.com', body: { key: 'value' } });
    * ```
    */
-  const startStream = async ({ url, body = {} }: StartStreamArgs): Promise<Response> => {
+  const startStream = async ({
+    url,
+    body = {},
+    headers = {},
+    method = "POST"
+  }: StartStreamArgs): Promise<Response> => {
     try {
       const abortController = new AbortController()
       abortControllerRef.current = abortController
@@ -63,7 +70,8 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
       onBeforeStart && onBeforeStart()
 
       const response = await fetch(`${url}`, {
-        method: "POST",
+        method,
+        headers,
         signal: abortController.signal,
         body: JSON.stringify(body)
       })

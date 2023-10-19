@@ -44,6 +44,8 @@ To install the package, run the following command:
 | onEnd            | function | Optional callback function that will be invoked when the chat stream ends. |
 | startingMessages | array    | Optional array of starting messages. |
 | ctx              | object   | Optional static context object, appended to every post body on each startStream invocation . |
+| defaultMethod | string | Optional method for the request, one of GET | POST defaults to POST. |
+| defaultHeaders | object | Optional request headers |
 
 #### Usage
 
@@ -61,6 +63,8 @@ To install the package, run the following command:
 | url     | string | The URL of the stream. |
 | prompt  | string | A string prompt included in the  post body on the request to your url. |
 | ctx     | object | Optional context object, sent in the post body on the request to your url. |
+| method | string | Optional method for the request, one of GET | POST defaults to POST. |
+| headers | object | Optional request headers |
 
 Example:
 
@@ -90,7 +94,10 @@ Example:
 | onReceive | function | Optional callback function that will be invoked when a JSON object is received. |
 | onEnd     | function | Optional callback function that will be invoked when the JSON stream ends. |
 | schema    | z.ZodObject   | The zod schema for the JSON data, the top level must be an object. |
-| ctx       | object   | Optional static context object, appended to every post body on each startStream invocation . |
+| ctx       | object   | Optional static context object, appended to every post body on each
+startStream invocation . |
+| defaultMethod | string | Optional method for the request, one of GET | POST defaults to POST. |
+| defaultHeaders | object | Optional request headers |
 
 #### Usage
 
@@ -108,6 +115,8 @@ Example:
 | ---- | ------ | ----------- |
 | url  | string | The URL of the stream. |
 | ctx  | object | Optional context object, sent in the post body to your url. |
+| method | string | Optional method for the request, one of GET | POST defaults to POST. |
+| headers | object | Optional request headers |
 
 Example:
 
