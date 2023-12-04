@@ -77,8 +77,8 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
       })
 
       if (!response.ok) {
-        console.error(`error calling stream url ${url}: ${response.statusText}`)
-        throw new Error(response.statusText)
+        console.error(`error calling stream url ${url}: ${response?.statusText}`)
+        throw response
       }
 
       return response
