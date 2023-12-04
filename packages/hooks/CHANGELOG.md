@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 0.2.0
+
+### Minor Changes
+
+- [`aa443a9`](https://github.com/hack-dance/agents/commit/aa443a9336664816c84582ee68dff3b239dd7083) Thanks [@roodboi](https://github.com/roodboi)! - Change error thrown from stream call to jsut be the response error unless we have an abort signal
+
 ## 0.1.1
 
 ### Patch Changes
