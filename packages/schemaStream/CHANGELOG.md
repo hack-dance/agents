@@ -1,5 +1,11 @@
 # schema-stream
 
+## 1.0.0
+
+### Major Changes
+
+- [#45](https://github.com/hack-dance/agents/pull/45) [`76342d4`](https://github.com/hack-dance/agents/commit/76342d4c40eee773887564432c97f931785ace33) Thanks [@roodboi](https://github.com/roodboi)! - Forked the json parser package instead of t rying to work around it - updated props and things to accept default data and am now returning a few things like activeKey
+
 ## 0.0.2
 
 ### Patch Changes
