@@ -1,7 +1,7 @@
 import { lensPath, set, view } from "ramda"
 import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
-import JSONParser from "./combine"
+import JSONParser from "./json-parser"
 
 type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
 

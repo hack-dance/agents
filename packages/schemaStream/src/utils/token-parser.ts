@@ -1,4 +1,14 @@
-import { TokenType } from "@streamparser/json"
+/**
+ * This file has been modified -  but the majority pulled directly from
+ *  https://www.npmjs.com/package/@streamparser/json
+ *  https://github.com/juanjoDiaz/streamparser-json
+ *
+ *  Copyright (c) 2020 Juanjo Diaz
+ *  https://github.com/juanjoDiaz
+ *
+ */
+
+import TokenType from "./token-type"
 
 export type JsonPrimitive = string | number | boolean | null
 export type JsonKey = string | number | undefined
@@ -268,7 +278,6 @@ export default class TokenParser {
             return
           }
 
-          /* istanbul ignore else */
           if (this.mode === TokenParserMode.OBJECT) {
             this.state = TokenParserState.KEY
             return

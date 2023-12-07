@@ -1,7 +1,16 @@
-import { TokenType } from "@streamparser/json"
+/**
+ * This file has been modified -  but the majority pulled directly from
+ *  https://www.npmjs.com/package/@streamparser/json
+ *  https://github.com/juanjoDiaz/streamparser-json
+ *
+ *  Copyright (c) 2020 Juanjo Diaz
+ *  https://github.com/juanjoDiaz
+ *
+ */
 
 import { BufferedString, NonBufferedString, type StringBuilder } from "./buffered-string"
-import type { ParsedTokenInfo } from "./parser"
+import type { ParsedTokenInfo } from "./token-parser"
+import TokenType from "./token-type"
 import { charset, escapedSequences } from "./utf-8.js"
 
 // Tokenizer States

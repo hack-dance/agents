@@ -1,3 +1,13 @@
+/**
+ * This file has been modified -  but the majority pulled directly from
+ *  https://www.npmjs.com/package/@streamparser/json
+ *  https://github.com/juanjoDiaz/streamparser-json
+ *
+ *  Copyright (c) 2020 Juanjo Diaz
+ *  https://github.com/juanjoDiaz
+ *
+ */
+
 export interface StringBuilder {
   byteLength: number
   appendChar: (char: number) => void

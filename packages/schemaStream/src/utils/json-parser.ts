@@ -1,7 +1,11 @@
-import { TokenType, type TokenParserOptions, type TokenizerOptions } from "@streamparser/json"
-
-import TokenParser, { ParsedElementInfo, ParsedTokenInfo, TokenParserState } from "./parser"
-import Tokenizer from "./tokenizer"
+import TokenParser, {
+  ParsedElementInfo,
+  ParsedTokenInfo,
+  TokenParserState,
+  type TokenParserOptions
+} from "./token-parser"
+import TokenType from "./token-type"
+import Tokenizer, { type TokenizerOptions } from "./tokenizer"
 
 export interface JSONParserOptions extends TokenizerOptions, TokenParserOptions {}
 
