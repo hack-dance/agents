@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -544,14 +548,14 @@ importers:
         specifier: ^6.4.0
         version: 6.7.0(postcss@8.4.25)(typescript@5.2.2)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: 3.22.4
+        version: 3.22.4
 
   packages/schemaStream:
     dependencies:
       '@streamparser/json':
-        specifier: ^0.0.15
-        version: 0.0.15
+        specifier: ^0.0.17
+        version: 0.0.17
       ramda:
         specifier: ^0.29.0
         version: 0.29.0
@@ -563,8 +567,8 @@ importers:
         specifier: ^6.4.0
         version: 6.7.0(postcss@8.4.25)(typescript@5.2.2)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: 3.22.4
+        version: 3.22.4
 
   packages/tsconfig:
     dependencies:
@@ -1129,6 +1133,7 @@ packages:
 
   /@emotion/memoize@0.7.4:
     resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -3542,8 +3547,8 @@ packages:
       '@sinonjs/commons': 3.0.0
     dev: true
 
-  /@streamparser/json@0.0.15:
-    resolution: {integrity: sha512-6oikjkMTYAHGqKmcC9leE4+kY4Ch4eiTImXUN/N4d2bNGBYs0LJ/tfxmpvF5eExSU7iiPlV9jYlADqvj3NWA3Q==}
+  /@streamparser/json@0.0.17:
+    resolution: {integrity: sha512-mW54K6CTVJVLwXRB6kSS1xGWPmtTuXAStWnlvtesmcySgtop+eFPWOywBFPpJO4UD173epYsPSP6HSW8kuqN8w==}
     dev: false
 
   /@swc/helpers@0.5.1:
@@ -10030,6 +10035,10 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: true
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
