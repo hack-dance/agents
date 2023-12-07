@@ -86,6 +86,8 @@ export function useStream({ onBeforeStart, onStop }: UseStreamProps): {
       if (err?.name === "AbortError") {
         console.log("useStream: stream aborted", err)
         abortControllerRef.current = null
+
+        return err
       }
 
       console.error(`useStream: error`, err)

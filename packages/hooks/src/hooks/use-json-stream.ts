@@ -23,13 +23,16 @@ interface StopStream {
   (): void
 }
 
-export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamProps {
-  onReceive?: (value: object | unknown) => void
-  onEnd?: (json: object) => void
-  schema: z.ZodObject<T>
+type SchemaType = z.AnyZodObject
+
+export interface UseJsonStreamProps extends UseStreamProps {
+  onReceive?: (data) => void
+  onEnd?: (data) => void
+  schema: SchemaType
   defaultHeaders?: Record<string, string>
   defaultMethod?: "GET" | "POST"
   ctx?: object
+  defaultData?: object | null
 }
 
 /**
@@ -51,27 +54,40 @@ export interface UseJsonStreamProps<T extends z.ZodRawShape> extends UseStreamPr
  * } = useJsonStream({ onBeforeStart: ..., onReceive: ..., onStop: ..., schema: ... });
  * ```
  */
-export function useJsonStream<T extends z.ZodRawShape>({
+
+export function useJsonStream({
   onReceive,
   onEnd,
   schema,
+  defaultData = null,
   ctx = {},
   defaultHeaders,
   defaultMethod = "POST",
   ...streamProps
-}: UseJsonStreamProps<T>): {
+}: UseJsonStreamProps): {
   startStream: StartStream
   stopStream: StopStream
-  json: z.infer<typeof schema>
+  json
   loading: boolean
+  completedKeys: string[]
+  activeKey: string | undefined
 } {
-  const streamParser = new SchemaStream(schema)
-  const stubbedValue = streamParser.getSchemaStub(schema)
+  const [completedKeys, setCompletedKeys] = useState<string[]>([])
+  const [activeKey, setActiveKey] = useState<string | undefined>(undefined)
+
+  const streamParser = new SchemaStream(schema, {
+    defaultData,
+    onKeyComplete: ({ activeKey, completedKeys }) => {
+      setActiveKey(activeKey)
+      setCompletedKeys(completedKeys)
+    }
+  })
+  const stubbedValue = streamParser.getSchemaStub(schema, defaultData)
 
   const [loading, setLoading] = useState(false)
   const { startStream: startStreamBase, stopStream } = useStream(streamProps)
-  const [json, setJson] = useState<z.infer<typeof schema>>(stubbedValue)
-  const jsonRef = useRef<z.infer<typeof schema>>(json)
+  const [json, setJson] = useState(stubbedValue)
+  const jsonRef = useRef(json)
 
   /**
    * @function startStream
@@ -92,6 +108,10 @@ export function useJsonStream<T extends z.ZodRawShape>({
     method
   }: StartStreamArgs) => {
     setLoading(true)
+    const parser = streamParser.parse({
+      stringStreaming: true
+    })
+
     const response = await startStreamBase({
       url,
       method: method ?? defaultMethod ?? "POST",
@@ -109,7 +129,6 @@ export function useJsonStream<T extends z.ZodRawShape>({
     })
 
     if (response?.body) {
-      const parser = streamParser.parse()
       response.body.pipeThrough(parser)
 
       const reader = parser.readable.getReader()
@@ -122,13 +141,15 @@ export function useJsonStream<T extends z.ZodRawShape>({
           done = doneReading
 
           if (done) {
-            onEnd && onEnd(jsonRef.current)
+            onEnd && onEnd(jsonRef.current as z.infer<typeof schema>)
             setLoading(false)
+            setCompletedKeys([])
+            setActiveKey(undefined)
             break
           }
 
           const chunkValue = decoder.decode(value)
-          const result = JSON.parse(chunkValue)
+          const result = JSON.parse(chunkValue) as z.infer<typeof schema>
 
           jsonRef.current = result
           setJson(result)
@@ -136,11 +157,15 @@ export function useJsonStream<T extends z.ZodRawShape>({
         } catch (err) {
           done = true
           setLoading(false)
+
           if (err?.name === "AbortError") {
             console.log("useJsonStream: aborted", err)
             return null
           }
 
+          stopStream()
+          setCompletedKeys([])
+          setActiveKey(undefined)
           console.error(`useJsonStream: error`, err)
           throw err
         }
@@ -151,6 +176,8 @@ export function useJsonStream<T extends z.ZodRawShape>({
   return {
     startStream,
     stopStream,
+    completedKeys,
+    activeKey,
     json,
     loading
   }
