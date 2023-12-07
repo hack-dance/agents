@@ -80,10 +80,13 @@ while (!done) {
 
 ## API
 
-### `constructor(schema: SchemaType, {
-  defaultData?: object,
-  onKeyComplete?: ({ completedKeys, activeKey }) => void,
-})`
+```
+  constructor(schema: SchemaType, {
+    defaultData?: object,
+    onKeyComplete?: ({ completedKeys, activeKey }) => void
+  })
+```
+
 The constructor takes a Zod schema as an argument for validation. The top level of the schema must be an object.
 
 
