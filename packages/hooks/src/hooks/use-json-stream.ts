@@ -78,7 +78,6 @@ export function useJsonStream({
   const streamParser = new SchemaStream(schema, {
     defaultData,
     onKeyComplete: ({ activeKey, completedKeys }) => {
-      console.log(activeKey, completedKeys)
       setActiveKey(activeKey)
       setCompletedKeys(completedKeys)
     }
