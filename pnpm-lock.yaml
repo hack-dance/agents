@@ -553,9 +553,6 @@ importers:
 
   packages/schemaStream:
     dependencies:
-      '@streamparser/json':
-        specifier: ^0.0.17
-        version: 0.0.17
       ramda:
         specifier: ^0.29.0
         version: 0.29.0
@@ -3546,10 +3543,6 @@ packages:
     dependencies:
       '@sinonjs/commons': 3.0.0
     dev: true
-
-  /@streamparser/json@0.0.17:
-    resolution: {integrity: sha512-mW54K6CTVJVLwXRB6kSS1xGWPmtTuXAStWnlvtesmcySgtop+eFPWOywBFPpJO4UD173epYsPSP6HSW8kuqN8w==}
-    dev: false
 
   /@swc/helpers@0.5.1:
     resolution: {integrity: sha512-sJ902EfIzn1Fa+qYmjdQqh8tPsoxyBz+8yBKC2HKUxyezKJFwPGOn7pv4WY6QuQW//ySQi5lJjA/ZT9sNWWNTg==}
