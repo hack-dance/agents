@@ -2,13 +2,6 @@
 
 `schema-stream` is a utility for parsing streams of JSON data. It provides a safe-to-read-from stubbed version of the data before the stream has fully completed.
 
-The parser has been mostly forked from:
-https://github.com/juanjoDiaz/streamparser-json
-https://www.npmjs.com/package/@streamparser/json
-
-
-The primary difference is that this requires a zod schema and optional default data, to allow for a fully stubbed version of the expected data to be returned before the stream has completed. This allows for partially parsed data to be returned to the user asap, and for the user to be able to start working with the data before the stream has completed.
-
 I put this together to work alongside some other packages I have for workign with OpenAI streams. Using zod schemas to define a desired output and a set of react hooks for consuming that structured json output incrementally.
 
 ## Related Packages
@@ -105,3 +98,12 @@ The root must be a plain object.
 
 Please note that when expecting arrays of any type, the array values will not be stubbed since
 we don't know the length of those arrays beforehand - so the default will jsut be an empty lis, unless your pass in your own defaults.
+
+The parser has been mostly forked from:
+https://github.com/juanjoDiaz/streamparser-json
+
+The primary difference is that this requires a zod schema and optional default data, to allow for a fully stubbed version of the expected data to be returned before the stream has completed. This allows for partially parsed data to be returned to the user asap, and for the user to be able to start working with the data before the stream has completed.
+
+
+## License
+MIT © [hack-dance](https://hack.dance)
