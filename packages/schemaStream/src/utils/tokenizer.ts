@@ -84,12 +84,14 @@ export interface TokenizerOptions {
   stringBufferSize?: number
   numberBufferSize?: number
   separator?: string
+  handleUnescapedNewLines?: boolean
 }
 
 const defaultOpts: TokenizerOptions = {
   stringBufferSize: 0,
   numberBufferSize: 0,
-  separator: undefined
+  separator: undefined,
+  handleUnescapedNewLines: false
 }
 
 export class TokenizerError extends Error {
@@ -103,6 +105,7 @@ export class TokenizerError extends Error {
 export default class Tokenizer {
   private state = TokenizerStates.START
 
+  private handleUnescapedNewLines?: boolean
   private separator?: string
   private separatorBytes?: Uint8Array
   private separatorIndex = 0
@@ -120,22 +123,29 @@ export default class Tokenizer {
   constructor(opts?: TokenizerOptions) {
     opts = { ...defaultOpts, ...opts }
 
-    this.bufferedString = new NonBufferedString({
-      onIncrementalString: str => {
-        this.onToken({
-          token: TokenType.STRING,
-          value: str,
-          partial: true
-        })
-      }
-    })
+    const onIncrementalString = str => {
+      this.onToken({
+        token: TokenType.STRING,
+        value: str,
+        partial: true
+      })
+    }
+
+    this.bufferedString =
+      opts?.stringBufferSize && opts.stringBufferSize > 0
+        ? new BufferedString(opts.stringBufferSize)
+        : new NonBufferedString({
+            onIncrementalString
+          })
+
     this.bufferedNumber =
-      opts.numberBufferSize && opts.numberBufferSize > 0
-        ? new BufferedString(opts.numberBufferSize)
+      opts?.numberBufferSize && opts.numberBufferSize > 0
+        ? new BufferedString(opts.numberBufferSize, onIncrementalString)
         : new NonBufferedString({})
 
-    this.separator = opts.separator
-    this.separatorBytes = opts.separator ? this.encoder.encode(opts.separator) : undefined
+    this.handleUnescapedNewLines = opts?.handleUnescapedNewLines ?? false
+    this.separator = opts?.separator
+    this.separatorBytes = opts?.separator ? this.encoder.encode(opts.separator) : undefined
   }
 
   public get isEnded(): boolean {
@@ -281,6 +291,12 @@ export default class Tokenizer {
             break
           // STRING
           case TokenizerStates.STRING_DEFAULT:
+            if (this.handleUnescapedNewLines && n === charset.NEWLINE) {
+              this.bufferedString.appendChar(charset.REVERSE_SOLIDUS) // Appends '\'
+              this.bufferedString.appendChar(charset.LATIN_SMALL_LETTER_N) // Appends 'n'
+              continue
+            }
+
             if (n === charset.QUOTATION_MARK) {
               const string = this.bufferedString.toString()
               this.state = TokenizerStates.START

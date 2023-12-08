@@ -13,6 +13,8 @@ interface StartStreamArgs {
   body?: object
   headers?: Record<string, string>
   method?: "GET" | "POST"
+  stringBufferSize?: number
+  handleUnescapedNewLines?: boolean
 }
 
 interface StartStream {
@@ -82,6 +84,7 @@ export function useJsonStream({
       setCompletedKeys(completedKeys)
     }
   })
+
   const stubbedValue = streamParser.getSchemaStub(schema, defaultData)
 
   const [loading, setLoading] = useState(false)
@@ -105,11 +108,15 @@ export function useJsonStream({
     ctx: completionCtx = {},
     body = {},
     headers,
-    method
+    method,
+    stringBufferSize,
+    handleUnescapedNewLines
   }: StartStreamArgs) => {
     setLoading(true)
     const parser = streamParser.parse({
-      stringStreaming: true
+      stringStreaming: true,
+      stringBufferSize,
+      handleUnescapedNewLines
     })
 
     const response = await startStreamBase({

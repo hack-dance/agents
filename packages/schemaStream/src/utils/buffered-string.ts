@@ -58,10 +58,13 @@ export class BufferedString implements StringBuilder {
   private buffer: Uint8Array
   private bufferOffset = 0
   private string = ""
+  private onIncrementalString?: (str: string) => void
+
   public byteLength = 0
 
-  public constructor(bufferSize: number) {
+  public constructor(bufferSize: number, onIncrementalString?: (str: string) => void) {
     this.buffer = new Uint8Array(bufferSize)
+    this.onIncrementalString = onIncrementalString ?? undefined
   }
 
   public appendChar(char: number): void {
@@ -73,6 +76,7 @@ export class BufferedString implements StringBuilder {
   public appendBuf(buf: Uint8Array, start = 0, end: number = buf.length): void {
     const size = end - start
     if (this.bufferOffset + size > this.buffer.length) this.flushStringBuffer()
+
     this.buffer.set(buf.subarray(start, end), this.bufferOffset)
     this.bufferOffset += size
     this.byteLength += size
@@ -81,6 +85,11 @@ export class BufferedString implements StringBuilder {
   private flushStringBuffer(): void {
     this.string += this.decoder.decode(this.buffer.subarray(0, this.bufferOffset))
     this.bufferOffset = 0
+    this.update()
+  }
+
+  private update(): void {
+    if (this.onIncrementalString) this.onIncrementalString(this.toString())
   }
 
   public reset(): void {

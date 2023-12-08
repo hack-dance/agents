@@ -167,11 +167,20 @@ export class SchemaStream {
    * @param {boolean} [opts.stringStreaming=true] - Whether to enable streaming of partial strings. If this is true, chunks of a string value will be added to the stubbed version of the data as soon as they are parsed.
    * @returns A `TransformStream` that can be used to process the JSON data.
    */
-  public parse(opts: { stringStreaming?: boolean } = { stringStreaming: true }) {
+  public parse(
+    opts: {
+      stringStreaming?: boolean
+      stringBufferSize?: number
+      handleUnescapedNewLines?: boolean
+    } = { stringStreaming: true, stringBufferSize: 0, handleUnescapedNewLines: true }
+  ) {
     this.stringStreaming = opts.stringStreaming ?? this.stringStreaming
 
     const textEncoder = new TextEncoder()
-    const parser = new JSONParser()
+    const parser = new JSONParser({
+      stringBufferSize: opts.stringBufferSize ?? 0,
+      handleUnescapedNewLines: opts.handleUnescapedNewLines ?? true
+    })
 
     parser.onToken = this.handleToken.bind(this)
     parser.onValue = () => void 0
