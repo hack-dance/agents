@@ -1,5 +1,11 @@
 # schema-stream
 
+## 1.1.0
+
+### Minor Changes
+
+- [#47](https://github.com/hack-dance/agents/pull/47) [`906a0b9`](https://github.com/hack-dance/agents/commit/906a0b9c90228ccfa14ab0c4e1961f60a5cc5ca3) Thanks [@roodboi](https://github.com/roodboi)! - add new options for string buffer size and hadnling of unescaped new lines
+
 ## 1.0.0
 
 ### Major Changes
