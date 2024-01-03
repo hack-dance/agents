@@ -80,6 +80,29 @@ export function OAIResponseFnArgsParser(
 }
 
 /**
+ * `OAIResponseToolArgsParser` parses a JSON string and extracts the tool call arguments.
+ *
+ * @param {string} data - The JSON string to parse.
+ * @returns {Object} - The extracted tool call arguments.
+ *
+ */
+export function OAIResponseToolArgsParser(
+  data:
+    | string
+    | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+    | OpenAI.Chat.Completions.ChatCompletion
+) {
+  const parsedData = typeof data === "string" ? JSON.parse(data) : data
+
+  const text =
+    parsedData.choices?.[0].delta?.tool_calls?.[0]?.function?.arguments ??
+    parsedData.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ??
+    null
+
+  return text
+}
+
+/**
  * `OAIResponseParser` parses a JSON string or a response object.
  * It checks if the input contains function call arguments. If it does,
  * it uses `OAIResponseFnArgsParser` to parse the input, otherwise, it uses `OAIResponseTextParser`.
@@ -101,9 +124,18 @@ export function OAIResponseParser<T>(
     parsedData.choices?.[0]?.message?.function_call?.arguments ||
     false
 
+  const isToolCall =
+    parsedData.choices?.[0].delta?.tool_calls?.[0]?.function?.arguments ??
+    parsedData.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ??
+    false
+
   if (isFnCall) {
     return OAIResponseFnArgsParser(data)
-  } else {
-    return OAIResponseTextParser(data)
   }
+
+  if (isToolCall) {
+    return OAIResponseToolArgsParser(data)
+  }
+
+  return OAIResponseTextParser(data)
 }

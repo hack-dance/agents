@@ -42,7 +42,7 @@ export interface ChatAgentInstance {
    * @returns {Promise<ReadableStream>} - A Promise that resolves to a ReadableStream.
    */
   completionStream: (props: AgentCompletionStreamProps) => Promise<ReadableStream>
-  completion: (props: AgentCompletionStreamProps) => Promise<unknown>
+  completion: (props: AgentCompletionStreamProps) => Promise<string>
 }
 
 /**
@@ -98,12 +98,15 @@ export const createChatAgent = ({
         throw new Error(error)
       }
     },
-    completion: async ({ prompt, messages = [] }: AgentCompletionStreamProps) => {
+    completion: async ({ prompt, messages = [] }: AgentCompletionStreamProps): Promise<string> => {
       const response = await agentInstance._completion({ prompt, messages, stream: false })
 
       return OAIResponseParser(response)
     },
-    completionStream: async ({ prompt, messages = [] }: AgentCompletionStreamProps) => {
+    completionStream: async ({
+      prompt,
+      messages = []
+    }: AgentCompletionStreamProps): Promise<ReadableStream<Uint8Array>> => {
       const response = await agentInstance._completion({ prompt, messages, stream: true })
 
       return OaiStream({ res: response as Stream<OpenAI.Chat.Completions.ChatCompletionChunk> })
@@ -133,24 +136,30 @@ export const createSchemaAgent = ({
 }: CreateSchemaAgentProps): SchemaAgentInstance => {
   const { definition } = createSchemaFunction({ schema })
   const functionConfig = {
-    function_call: {
-      name: definition.name
+    tool_choice: {
+      type: "function",
+      function: { name: definition.name }
     },
-    functions: [
+    tools: [
       {
-        name: definition.name,
-        description: definition.description,
-        parameters: {
-          type: "object",
-          properties: definition.parameters,
-          required: definition.required
+        type: "function",
+        function: {
+          name: definition.name,
+          description: definition.description,
+          parameters: {
+            type: "object",
+            properties: definition.parameters,
+            required: definition.required
+          }
         }
       }
     ]
   }
 
-  return createChatAgent({
+  const instance = createChatAgent({
     config: { ...config, ...functionConfig },
     identityMessages
   })
+
+  return instance
 }
