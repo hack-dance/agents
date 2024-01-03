@@ -1,5 +1,12 @@
 # @hackdance/hooks
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`0887740`](https://github.com/hack-dance/agents/commit/088774077c5ec6b18b07709b1c3b0f34e7abc1f8)]:
+  - schema-stream@1.2.1
+
 ## 3.0.0
 
 ### Patch Changes
