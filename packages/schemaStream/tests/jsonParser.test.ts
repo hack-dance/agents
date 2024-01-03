@@ -27,7 +27,7 @@ async function runTest<T extends ZodRawShape>(schema: ZodObject<T>, jsonData: ob
 describe("SchemaStream", () => {
   test("should parse valid JSON correctly - single layer primitives", async () => {
     const schema = z.object({
-      someString: z.string(),
+      someString: z.string().refine(val => val === "test", { params: { message: "not test" } }),
       someNumber: z.number(),
       someBoolean: z.boolean()
     })
