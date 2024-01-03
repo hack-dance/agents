@@ -1,5 +1,11 @@
 # schema-stream
 
+## 1.2.1
+
+### Patch Changes
+
+- [`0887740`](https://github.com/hack-dance/agents/commit/088774077c5ec6b18b07709b1c3b0f34e7abc1f8) Thanks [@roodboi](https://github.com/roodboi)! - remove log
+
 ## 1.2.0
 
 ### Minor Changes
