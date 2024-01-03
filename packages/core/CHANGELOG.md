@@ -1,5 +1,11 @@
 # @hackdance/agents
 
+## 1.0.0
+
+### Major Changes
+
+- [#52](https://github.com/hack-dance/agents/pull/52) [`29a69df`](https://github.com/hack-dance/agents/commit/29a69df3d4b68cd8c39051bd06ef267675eb9c2a) Thanks [@roodboi](https://github.com/roodboi)! - Moving to calling functions using tools since functions direct has been deprecated
+
 ## 0.1.0
 
 ### Minor Changes
