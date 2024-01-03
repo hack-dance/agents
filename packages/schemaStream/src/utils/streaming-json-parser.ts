@@ -2,6 +2,7 @@ import { lensPath, set, view } from "ramda"
 import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
 import JSONParser from "./json-parser"
+import TokenType from "./token-type"
 
 type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
 
@@ -96,6 +97,9 @@ export class SchemaStream {
       case "ZodOptional":
         //eslint-disable-next-line
         return this.getDefaultValue((type as ZodOptional<any>).unwrap())
+      case "ZodEffects":
+        console.log("optional", type)
+        return this.getDefaultValue(type._def.schema)
       case "ZodNullable":
         return null
       default:
@@ -139,7 +143,7 @@ export class SchemaStream {
       valuePath.shift()
       const lens = lensPath(valuePath)
 
-      if (partial) {
+      if (partial && token === TokenType.STRING && this.stringStreaming) {
         let currentValue = view(lens, value, this.schemaInstance) ?? ""
         const updatedValue = (currentValue += value)
         const updatedSchemaInstance = set(lens, updatedValue, this.schemaInstance)
