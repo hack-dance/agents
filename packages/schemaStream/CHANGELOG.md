@@ -1,5 +1,11 @@
 # schema-stream
 
+## 1.2.0
+
+### Minor Changes
+
+- [#49](https://github.com/hack-dance/agents/pull/49) [`7154c1b`](https://github.com/hack-dance/agents/commit/7154c1b5883015bd9244189d7396ce530732dd13) Thanks [@roodboi](https://github.com/roodboi)! - adding support for zod effects and ensuring parital streams apply only to strings
+
 ## 1.1.0
 
 ### Minor Changes
