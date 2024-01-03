@@ -98,12 +98,15 @@ export const createChatAgent = ({
         throw new Error(error)
       }
     },
-    completion: async ({ prompt, messages = [] }: AgentCompletionStreamProps) => {
+    completion: async ({ prompt, messages = [] }: AgentCompletionStreamProps): Promise<string> => {
       const response = await agentInstance._completion({ prompt, messages, stream: false })
 
       return OAIResponseParser(response)
     },
-    completionStream: async ({ prompt, messages = [] }: AgentCompletionStreamProps) => {
+    completionStream: async ({
+      prompt,
+      messages = []
+    }: AgentCompletionStreamProps): Promise<ReadableStream<Uint8Array>> => {
       const response = await agentInstance._completion({ prompt, messages, stream: true })
 
       return OaiStream({ res: response as Stream<OpenAI.Chat.Completions.ChatCompletionChunk> })
@@ -153,8 +156,10 @@ export const createSchemaAgent = ({
     ]
   }
 
-  return createChatAgent({
+  const instance = createChatAgent({
     config: { ...config, ...functionConfig },
     identityMessages
   })
+
+  return instance
 }
