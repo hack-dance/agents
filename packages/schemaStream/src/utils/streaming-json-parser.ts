@@ -98,7 +98,6 @@ export class SchemaStream {
         //eslint-disable-next-line
         return this.getDefaultValue((type as ZodOptional<any>).unwrap())
       case "ZodEffects":
-        console.log("optional", type)
         return this.getDefaultValue(type._def.schema)
       case "ZodNullable":
         return null
