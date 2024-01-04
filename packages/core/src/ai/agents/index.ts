@@ -132,7 +132,8 @@ export const createChatAgent = ({
 export const createSchemaAgent = ({
   config,
   identityMessages,
-  schema
+  schema,
+  oaiClientConfiguration
 }: CreateSchemaAgentProps): SchemaAgentInstance => {
   const { definition } = createSchemaFunction({ schema })
   const functionConfig = {
@@ -158,7 +159,8 @@ export const createSchemaAgent = ({
 
   const instance = createChatAgent({
     config: { ...config, ...functionConfig },
-    identityMessages
+    identityMessages,
+    oaiClientConfiguration
   })
 
   return instance
