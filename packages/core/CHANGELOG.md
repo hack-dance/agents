@@ -1,5 +1,11 @@
 # @hackdance/agents
 
+## 1.0.1
+
+### Patch Changes
+
+- [`eae1521`](https://github.com/hack-dance/agents/commit/eae1521c398ce527f4a14d84778f9bdeff9fec49) Thanks [@roodboi](https://github.com/roodboi)! - ensure oai client config passes through from schema agent creation
+
 ## 1.0.0
 
 ### Major Changes
