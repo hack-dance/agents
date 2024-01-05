@@ -1,5 +1,11 @@
 # schema-stream
 
+## 1.3.0
+
+### Minor Changes
+
+- [`a88a1c8`](https://github.com/hack-dance/agents/commit/a88a1c84bb000a40913884f62beaecf76b6faab1) Thanks [@roodboi](https://github.com/roodboi)! - Adding optional type defaults to allow for nulling out defaults in addition to the default data option
+
 ## 1.2.1
 
 ### Patch Changes
