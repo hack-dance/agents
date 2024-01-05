@@ -2,9 +2,13 @@ import { lensPath, set, view } from "ramda"
 import { ZodObject, ZodOptional, ZodRawShape, ZodTypeAny, z } from "zod"
 
 import JSONParser from "./json-parser"
-import TokenType from "./token-type"
 
 type SchemaType<T extends ZodRawShape = ZodRawShape> = ZodObject<T>
+type TypeDefaults = {
+  string?: string | null | undefined
+  number?: number | null | undefined
+  boolean?: boolean | null | undefined
+}
 
 type NestedValue = string | number | boolean | NestedObject | NestedValue[]
 type NestedObject = { [key: string]: NestedValue } | { [key: number]: NestedValue }
@@ -65,12 +69,16 @@ export class SchemaStream {
    */
   constructor(
     private schema: SchemaType,
-    opts: { defaultData?: object | null; onKeyComplete?: (data) => void | undefined } = {}
+    opts: {
+      defaultData?: object | null
+      typeDefaults?: TypeDefaults
+      onKeyComplete?: (data) => void | undefined
+    } = {}
   ) {
-    const { defaultData, onKeyComplete } = opts
+    const { defaultData, onKeyComplete, typeDefaults } = opts
 
     this.stringStreaming = true
-    this.schemaInstance = this.createBlankObject(schema, defaultData)
+    this.schemaInstance = this.createBlankObject(schema, defaultData, typeDefaults)
     this.onKeyComplete = onKeyComplete
   }
 
@@ -80,14 +88,14 @@ export class SchemaStream {
    * @param type - The Zod type.
    * @returns The default value for the type.
    */
-  private getDefaultValue(type: ZodTypeAny): unknown {
+  private getDefaultValue(type: ZodTypeAny, typeDefaults?: TypeDefaults): unknown {
     switch (type._def.typeName) {
       case "ZodString":
-        return ""
+        return typeDefaults?.hasOwnProperty("string") ? typeDefaults.string : ""
       case "ZodNumber":
-        return 0
+        return typeDefaults?.hasOwnProperty("number") ? typeDefaults.number : 0
       case "ZodBoolean":
-        return false
+        return typeDefaults?.hasOwnProperty("boolean") ? typeDefaults.boolean : false
       case "ZodArray":
         return []
       case "ZodRecord":
@@ -108,7 +116,8 @@ export class SchemaStream {
 
   private createBlankObject<T extends ZodRawShape>(
     schema: SchemaType<T>,
-    defaultData?: object | null
+    defaultData?: object | null,
+    typeDefaults?: TypeDefaults
   ): NestedObject {
     const obj: NestedObject = {}
 
@@ -117,7 +126,7 @@ export class SchemaStream {
       if (defaultData && defaultData[key as unknown as keyof NestedObject]) {
         obj[key as string] = defaultData[key as unknown as keyof NestedObject]
       } else {
-        obj[key as string] = this.getDefaultValue(type)
+        obj[key as string] = this.getDefaultValue(type, typeDefaults)
       }
     }
 
@@ -125,24 +134,28 @@ export class SchemaStream {
   }
 
   private handleToken({ token, value, partial, key, stack }) {
-    if (typeof key === undefined) return
-
-    if (this.activeKey !== key && typeof key === "string") {
-      this.activeKey && this.completedKeys.push(this.activeKey)
+    if (this.activeKey !== key) {
       this.activeKey = key
-      this.onKeyComplete &&
-        this.onKeyComplete({
-          completedKeys: this.completedKeys,
-          activeKey: this.activeKey
-        })
+
+      if (typeof this.activeKey === "string") {
+        this.completedKeys.push(this.activeKey)
+
+        this.onKeyComplete &&
+          this.onKeyComplete({
+            completedKeys: this.completedKeys,
+            activeKey: this.activeKey
+          })
+      }
     }
+
+    if (typeof key === undefined) return
 
     try {
       const valuePath = [...stack.map(({ key }) => key), key]
       valuePath.shift()
       const lens = lensPath(valuePath)
 
-      if (partial && token === TokenType.STRING && this.stringStreaming) {
+      if (partial) {
         let currentValue = view(lens, value, this.schemaInstance) ?? ""
         const updatedValue = (currentValue += value)
         const updatedSchemaInstance = set(lens, updatedValue, this.schemaInstance)
