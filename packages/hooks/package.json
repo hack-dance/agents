@@ -2,7 +2,7 @@
   "name": "@hackdance/hooks",
   "version": "4.0.0",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://hack.dance)",
-  "homepage": "https://oss.hack.dance",
+  "homepage": "https://island.novy.work",
   "repository": {
     "directory": "packages/hooks",
     "type": "git",

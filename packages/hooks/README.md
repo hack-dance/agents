@@ -1,3 +1,8 @@
+> [!WARNING]
+> The agents and hooks packages are no longer maintained and schema-stream has moved here: [island-ai](https://github.com/hack-dance/island-ai)
+> Agents has been mostly replaced by zod-stream and the hooks package has moved to stream-hooks - now both part of the island-ai project.
+
+
 # @hackdance/hooks
 
 This package provides three custom React hooks for managing streams, chat streams, and JSON streams.

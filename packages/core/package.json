@@ -2,7 +2,7 @@
   "name": "@hackdance/agents",
   "version": "1.0.1",
   "author": "Dimitri Kennedy <dimitri@sick.email> (https://hack.dance)",
-  "homepage": "https://oss.hack.dance",
+  "homepage": "https://island.novy.work",
   "repository": {
     "directory": "packages/core",
     "type": "git",
