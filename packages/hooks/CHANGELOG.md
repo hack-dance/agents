@@ -1,5 +1,11 @@
 # @hackdance/hooks
 
+## 4.0.1
+
+### Patch Changes
+
+- [`9a32e8a`](https://github.com/hack-dance/agents/commit/9a32e8a36a1c95681455a45e3890570da97b6a11) Thanks [@roodboi](https://github.com/roodboi)! - updating readmes and urls to point to new project
+
 ## 4.0.0
 
 ### Patch Changes
